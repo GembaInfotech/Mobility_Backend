@@ -1,0 +1,8 @@
+node_modules/
+
+logger
+yarn.lock
+.env
+.idea
+
+FirebaseFunctions/functions/node_modules

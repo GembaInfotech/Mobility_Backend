@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SML</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+
+
+        * {
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        table {
+            border-spacing: 0;
+        }
+
+        td {
+            padding: 0;
+        }
+
+        img {
+            border: 0;
+        }
+
+        .wrapper {
+            width: 100%;
+            table-layout: fixed;
+            background-color: #202124;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 600px;
+            background-color: #0d141a;
+            padding: 40px 0px 40px 0px;
+        }
+
+        .td_divider {
+            background-color: #65656584;
+        }
+
+        .td_logo {
+            padding: 36px 0px;
+            text-align: center;
+        }
+
+        .td_logo a img {
+            width: 150px;
+        }
+
+        .td_heading {
+            padding: 12px 40px;
+            color: white;
+        }
+
+        .td_sub_heading {
+            padding: 12px 40px;
+            color: #656565;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .td_otp_table {
+            padding: 12px;
+            text-align: center;
+            color: #3cc1ff;
+            background-color: #162632;
+            font-size: 42px;
+            font-weight: 600;
+            letter-spacing: 20px;
+            line-height: 60px;
+        }
+
+        .td_welcome_heading {
+            color: #ffffff;
+            font-size: 24px;
+            letter-spacing: -1px;
+            padding-top: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .td_welcome_sub_heading {
+            color: #999c9f;
+            font-size: x-small;
+            text-align: center;
+        }
+
+        .two_columns {
+            padding: 16px 0px;
+            text-align: center;
+        }
+
+        .column {
+            background-color: #656565;
+            cursor: pointer;
+            max-width: fit-content;
+            display: inline-block;
+            width: 100%;
+            margin: 0 4px;
+        }
+
+        .two_sub_columns {
+            text-align: center;
+        }
+
+        .sub_columns {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .td_social {
+            color: #ffffff;
+            padding: 8px;
+            font-size: 11px;
+        }
+
+        .td_social a img {
+            padding: 0 4px 0 0;
+            margin: -5px 0px;
+        }
+
+        .td_social_links {
+            text-align: center;
+            padding: 16px;
+        }
+
+        .td_social_links a {
+            display: inline-block;
+            padding: 6px;
+        }
+
+        .bg-discordsmall {
+            scale: 0.8;
+            width: 34px;
+            height: 23px;
+            background: url("https://asset.getanimo.io/website-assets/image/css_sprites.png") -315px -22px;
+        }
+
+        .bg-fbsmall {
+            scale: 0.8;
+            width: 28px;
+            height: 28px;
+            background: url("https://asset.getanimo.io/website-assets/image/css_sprites.png") -22px -22px;
+        }
+
+        .bg-instasmall {
+            scale: 0.8;
+            width: 28px;
+            height: 28px;
+            background: url("https://asset.getanimo.io/website-assets/image/css_sprites.png")-94px -22px;
+        }
+
+        .bg-youtubesmall {
+            scale: 0.8;
+            width: 33px;
+            height: 23px;
+            background: url("https://asset.getanimo.io/website-assets/image/css_sprites.png") -238px -22px;
+        }
+
+        .td_social-link-hover {
+            opacity: 0.75;
+        }
+
+        .td_social-link-hover:hover {
+            opacity: 1;
+        }
+
+        .td_footer_logo {
+            padding: 16px 0px 0px 0px;
+            text-align: center;
+        }
+
+        .td_footer_logo a img {
+            width: 100px;
+        }
+
+        .td_rights_sub_heading {
+            color: #656565;
+            font-size: 12px;
+            text-align: center;
+            padding: 4px;
+        }
+
+        .end-pad {
+            padding-bottom: 24px;
+        }
+
+        .connect-decorations {
+            text-decoration: none !important;
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <center class="wrapper">
+        <table class="main" width="100%">
+            <tr>
+                <td class="td_logo">
+                    <a href="https://getanimo.io/" target="_blank"> <img
+                            src="https://asset.getanimo.io/website-assets/image/logo.png" alt="logo" /></a>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="td_heading">Hi, Creator! </td>
+            </tr>
+            <tr>
+                <td class="td_heading">Use this code to log in. </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <table style="padding: 32px 40px; width: 100%;">
+                        <tr>
+                            <td class="td_otp_table">
+                                ${otp}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="td_heading">This OTP will expire within 5 minutes. If you face any issue while logging in,
+                    please <a href="mailto:connect@getanimo.io" style="color: #ffffff">contact us</a>.
+                </td>
+            </tr>
+            <tr>
+                <td class="td_sub_heading end-pad">If you didn’t request a login to Animo, please ignore this email.
+                </td>
+            </tr>
+
+
+
+            <tr>
+                <td height="1" class="td_divider"></td>
+            </tr>
+
+            <tr>
+                <td class="td_welcome_heading">Let's Connect</td>
+            </tr>
+
+            <tr>
+                <td class="td_welcome_sub_heading">
+                    Get a hands-on guidance from the product team.
+                </td>
+            </tr>
+            <tr>
+                <td class="two_columns">
+                    <table class="column">
+                        <tr>
+                            <td class="td_social">
+                                <table class="two_sub_columns">
+                                    <tr>
+                                        <td class="sub_columns">
+                                            <a href="https://wa.me/919381042703?text=Hey" target="_blank"
+                                                class="connect-decorations">
+                                                <img src="https://asset.getanimo.io/website-assets/image/whatsapp_w.png"
+                                                    width="20px" />
+                                            </a>
+                                        </td>
+                                        <td class="sub_columns">
+                                            <a href="https://wa.me/919381042703?text=Hey" target="_blank"
+                                                class="connect-decorations">
+                                                Chat on WhatsApp
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="column">
+                        <tr>
+                            <td class="td_social">
+                                <table class="two_sub_columns">
+                                    <tr>
+                                        <td class="sub_columns">
+                                            <a target="_blank" href="https://discord.gg/G26fUtZyVq"
+                                                class="connect-decorations">
+                                                <img src="https://asset.getanimo.io/website-assets/image/discord_w.png"
+                                                    width="20px" />
+                                            </a>
+                                        </td>
+                                        <td class="sub_columns">
+                                            <a target="_blank" href="https://discord.gg/G26fUtZyVq"
+                                                class="connect-decorations">
+                                                Join us on
+                                                Discord
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="td_social_links">
+                    <a target="_blank" href="https://www.youtube.com/channel/UC0jAqo-fEaOSDhq_YCDauWQ">
+                        <div class="bg-youtubesmall td_social-link-hover"></div>
+                    </a>
+                    <a target="_blank" href="https://www.instagram.com/get.animo/" style="padding: 3px">
+                        <div class="bg-instasmall td_social-link-hover"></div>
+                    </a>
+
+                    <a target="_blank" href="https://discord.gg/G26fUtZyVq">
+                        <div class="bg-discordsmall td_social-link-hover"></div>
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="td_footer_logo">
+                    <a href="https://getanimo.io/" target="_blank"> <img
+                            src="https://asset.getanimo.io/website-assets/image/logo.png" alt="logo" /></a>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="td_rights_sub_heading">
+                    © 2023 Metaplug Technologies LLP. All rights reserved.
+                </td>
+            </tr>
+        </table>
+
+
+    </center>
+</body>
+
+</html>
