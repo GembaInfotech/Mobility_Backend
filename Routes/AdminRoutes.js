@@ -290,6 +290,8 @@ module.exports = [
             handler: async function (request, h) {
                 const userData = request.auth && request.auth.credentials && request.auth.credentials.userData;
                 try {
+                    console.log("hello");
+                    
                     return UniversalFunctions.sendSuccess(null, await AdminController.listData(request.query, userData))
                 }
                 catch (e) {
@@ -305,6 +307,7 @@ module.exports = [
                     type : Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code'),
                     id: Joi.string().trim().description('for single data only'),
                     search: Joi.string().allow(''),
+                    mobile: Joi.string().allow(''),
                     patientDob : Joi.string().allow(''),
                     codeType : Joi.number(),
                     status: Joi.number(),

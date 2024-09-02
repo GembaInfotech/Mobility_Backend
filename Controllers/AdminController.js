@@ -96,6 +96,7 @@ async function blockDeleteData(payloadData, userData) {
 
 async function listData(payloadData, userData) {
     try {
+        console.log("payloadData", payloadData)
         const criteria = { status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED } };
 
         if (payloadData.search && payloadData.search !== '') {
@@ -108,7 +109,17 @@ async function listData(payloadData, userData) {
             ]
         }
 
+        if (payloadData.mobile && payloadData.mobile !== '') {
+            criteria.$or= [
+                { phoneNumber: { $regex: payloadData.mobile, $options: 'i' } }
+            ];
+        }
+
         if (payloadData.id) criteria._id = payloadData.id
+        if(payloadData.patientDob)criteria.dob = {
+            $gte: moment(payloadData.patientDob, 'MM/DD/YYYY').startOf('day').toDate(),
+            $lte: moment(payloadData.patientDob, 'MM/DD/YYYY').endOf('day').toDate(),
+        }
         if (payloadData.status) criteria.status = payloadData.status
         if (payloadData.codeType) criteria.type = payloadData.codeType
 
