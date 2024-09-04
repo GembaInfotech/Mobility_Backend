@@ -220,8 +220,13 @@ function findListingModel(type) {
             break;   
         case 8:
             model = Modal.Prescriptions;
-            break;   
-
+            break;  
+        case 9:
+            model = Modal.Material;
+            break;
+        case 10:
+            model = Modal.Inventory
+            
         default:
             break;
     }

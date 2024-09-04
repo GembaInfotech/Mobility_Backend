@@ -143,6 +143,13 @@ async function listData(payloadData, userData) {
             ];
         }
 
+        // if (payloadData.type === 9) {
+        //     populate = [
+        //         { path: "primaryInsurance", select: "name" },
+        //         { path: "secondaryInsurance", select: "name" }
+        //     ];
+        // }
+
         if (payloadData.type === 7 && !payloadData.id) {
             criteria._id = { $ne: userData._id }
         }
@@ -492,6 +499,14 @@ async function addEditData(payloadData, userData) {
         }
         case 3: {
             model = Modal.Codes;
+            break;
+        }
+        case 9:{
+            model = Modal.Material;
+            break;
+        }
+        case 10:{
+            model = Modal.Inventory;
             break;
         }
     }

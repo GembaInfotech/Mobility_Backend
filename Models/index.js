@@ -1,3 +1,5 @@
+const Inventory = require('./Inventory');
+
 
 module.exports = {
 
@@ -10,5 +12,7 @@ module.exports = {
     InsuranceCompanies: require('./InsuranceCompanies'),
     Prescriptions: require('./Prescriptions'),
     Locations: require('./Locations'),
+    Material:require('./Material'),
+    Inventory:require('./Inventory')
 
 };

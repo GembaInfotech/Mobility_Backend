@@ -304,7 +304,7 @@ module.exports = [
             tags: ['api', 'admin'],
             validate: {
                 query: {
-                    type : Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code'),
+                    type : Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material'),
                     id: Joi.string().trim().description('for single data only'),
                     search: Joi.string().allow(''),
                     mobile: Joi.string().allow(''),
@@ -600,11 +600,15 @@ module.exports = [
             tags: ['api', 'admin'],
             validate: {
                 payload: {
-                    modelType: Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code'),
+                    modelType: Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material, 10- inventory'),
                     id: Joi.string().trim().description('for edit only'),
+                    group:Joi.string(),
+                    material:Joi.string(),
                     type: Joi.string(),
                     name: Joi.string(),
                     code: Joi.string(),
+                    address: Joi.string(),
+                    storeManager: Joi.string(),
                     description: Joi.string().allow(''),
                 },
                 headers: UniversalFunctions.authorizationHeaderObj,
@@ -618,6 +622,9 @@ module.exports = [
             }
         }
     },
+
+
+    
 
     {
         method: 'POST',
