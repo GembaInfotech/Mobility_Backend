@@ -10,6 +10,7 @@ const Material = new Schema({
     status: { type: Number, default: APP_CONSTANTS.DATABASE.STATUS.ACTIVE },
     description: { type: String, required: true },
     lastUpdateBy: { type: Schema.Types.ObjectId, ref: 'Admins' },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'Admins' },
 }, {
     timestamps: true
 });

@@ -143,12 +143,11 @@ async function listData(payloadData, userData) {
             ];
         }
 
-        // if (payloadData.type === 9) {
-        //     populate = [
-        //         { path: "primaryInsurance", select: "name" },
-        //         { path: "secondaryInsurance", select: "name" }
-        //     ];
-        // }
+        if (payloadData.type === 9) {
+            populate = [
+                { path: "createdBy", select: "name" },
+            ];
+        }
 
         if (payloadData.type === 7 && !payloadData.id) {
             criteria._id = { $ne: userData._id }
@@ -512,6 +511,10 @@ async function addEditData(payloadData, userData) {
     }
 
     payloadData.lastUpdateBy = userData._id;
+
+    if(!payloadData.id){
+        payloadData.createdBy = userData._id;
+    }
 
     if (payloadData.id) {
         return await Service.findAndUpdate(model, { _id: payloadData.id }, payloadData, { new: true });
