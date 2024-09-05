@@ -96,7 +96,7 @@ async function blockDeleteData(payloadData, userData) {
 
 async function listData(payloadData, userData) {
     try {
-        console.log("payloadData", payloadData)
+        
         const criteria = { status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED } };
 
         if (payloadData.search && payloadData.search !== '') {
@@ -149,6 +149,12 @@ async function listData(payloadData, userData) {
             ];
         }
 
+        if (payloadData.createdBy && payloadData.createdBy !== '') {
+            criteria.$or = [
+                { material: { $regex: payloadData.createdBy, $options: 'i' } }
+            ];
+        }
+        
         if (payloadData.type === 7 && !payloadData.id) {
             criteria._id = { $ne: userData._id }
         }
@@ -157,6 +163,9 @@ async function listData(payloadData, userData) {
             Service.populateData(findListingModel(payloadData.type), criteria, {}, options, populate),
             Service.count(findListingModel(payloadData.type), criteria)
         ])
+
+        console.log("data", data);
+        
 
         return { data: payloadData.id ? data[0] : data, count };
     }
@@ -512,8 +521,13 @@ async function addEditData(payloadData, userData) {
 
     payloadData.lastUpdateBy = userData._id;
 
-    if(!payloadData.id){
+    if (!payloadData.id) {
         payloadData.createdBy = userData._id;
+        
+        // Generate unique code for new material
+        if (payloadData.modelType === 9) {
+            payloadData.materialNo = await generateUniqueNo(9); // Pass type 9
+        }
     }
 
     if (payloadData.id) {

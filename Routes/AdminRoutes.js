@@ -309,6 +309,7 @@ module.exports = [
                     search: Joi.string().allow(''),
                     mobile: Joi.string().allow(''),
                     patientDob : Joi.string().allow(''),
+                    createdBy: Joi.string().allow(''),
                     codeType : Joi.number(),
                     status: Joi.number(),
                     limit: Joi.number(),

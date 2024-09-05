@@ -235,22 +235,38 @@ function findListingModel(type) {
 }
 
 async function generateUniqueNo(type) {
-
     let model;
-    if(type === 1) model = Modal.Patients;
-    if(type === 2) model = Modal.Prescriptions;
+    let prefix;
+    let startingId = 100001; 
+    let numberLength = 6; 
 
-    let check = await Service.findOne(model,{},{patientNo : 1,orderNo:1},{sort :{_id:-1}});
+    if (type === 1) {
+        model = Modal.Patients;
+        prefix = 'P'; 
+    }
+    if (type === 2) {
+        model = Modal.Prescriptions;
+        prefix = 'S'; 
+    }
+    if (type === 9) {
+        model = Modal.Material;
+        prefix = 'M'; 
+    }
 
+    let check = await Service.findOne(model, {}, { patientNo: 1, orderNo: 1, materialNo: 1 }, { sort: { _id: -1 } });
+
+    let newNumber;
     if (!check) {
-        newNumber = startingId;
+        newNumber = startingId; 
     } else {
-        const alreadyId = check.patientNo || check.orderNo;
-        let previousNumber = Number(alreadyId.match(/\d+/));
+        const alreadyId = check.patientNo || check.orderNo || check.materialNo;
+        let previousNumber = Number(alreadyId.match(/\d+/)); 
         newNumber = previousNumber + 1;
     }
 
-    return `${type === 1 ? 'P' : type === 2 ? 'S' : 'PR'}${newNumber}`
+    let formattedNumber = newNumber.toString().padStart(numberLength, '0');
+
+    return `${prefix}${formattedNumber}`;
 }
 
 async function uploadFileStorage(image, folder) {
