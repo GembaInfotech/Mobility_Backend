@@ -433,6 +433,9 @@ async function prescriptions(payloadData, userData) {
         if (payloadData.id)
             criteria._id = payloadData.id
 
+        if(payloadData.nad)
+            criteria.nextAppointmentDate = payloadData.nad
+
         if (payloadData.patientId && payloadData.patientId !== '')
             criteria.patientId = payloadData.patientId
 
@@ -446,6 +449,32 @@ async function prescriptions(payloadData, userData) {
             const patients = await Service.getData(Modal.Patients,query,{ _id:1 },{lean:true});
             criteria.patientId = {$in: patients.map((patient) => patient._id)}
         }
+
+        // if(payloadData.search) {
+        //     const query = { 
+        //         name: payloadData.search
+        //     }
+        //     const locations = await Service.getData(Modal.Locations,query,{ _id:1 },{lean:true});
+        //     criteria.appointmentLocationId = {$in: locations.map((location) => location._id)}
+        // }
+
+        // if(payloadData.search) {
+        //     const query = { 
+        //         name: payloadData.search
+        //     }
+        //     const physicians = await Service.getData(Modal.Physician,query,{ _id:1 },{lean:true});
+        //     criteria.renderingPhysicianId = {$in: physicians.map((physician) => physician._id)}
+        // }
+
+        // if(payloadData.search) {
+        //     const query = { 
+        //         code: payloadData.search
+        //     }
+        //     const lCodes= await Service.getData(Modal.Codes,query,{ _id:1 },{lean:true});
+        //     criteria.prescriptions.lCode = {$in: lCodes.map((lCode) => lCode._id)}
+        // }
+
+        
 
         if ('status' in payloadData)
             criteria.orderStatus = payloadData.status

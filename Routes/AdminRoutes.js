@@ -386,6 +386,8 @@ module.exports = [
                     search : Joi.string().allow(''),
                     patientId : Joi.string().allow(''),
                     patientDob : Joi.string().allow(''),
+                    nad:Joi.string().allow(''),
+                    prescriptionDate: Joi.string().allow(''),
                     startDate : Joi.string().allow(''),
                     endDate : Joi.string().allow(''),
                 },
