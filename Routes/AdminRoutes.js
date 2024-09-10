@@ -141,7 +141,19 @@ module.exports = [
                     type : Joi.number().required().description('1- Service order,'),
                     startDate : Joi.string().description('MM/DD/YYYY').required(),
                     endDate : Joi.string().description('MM/DD/YYYY').required(),
-                    userId : Joi.string()
+                    userId : Joi.string(),
+
+                    // id : Joi.string(),
+                    skip : Joi.number(),
+                    limit : Joi.number(),
+                    status  : Joi.number(),
+                    search : Joi.string().allow(''),
+                    patientId : Joi.string().allow(''),
+                    patientDob : Joi.string().allow(''),
+                    nad:Joi.string().allow(''),
+                    prescriptionDate: Joi.string().allow(''),
+                    startDate : Joi.string().allow(''),
+                    endDate : Joi.string().allow(''),
                 },
                 headers: UniversalFunctions.authorizationHeaderObj,
                 failAction: UniversalFunctions.failActionFunction
@@ -154,6 +166,7 @@ module.exports = [
             }
         }
     },
+
 
 
     {
@@ -290,7 +303,7 @@ module.exports = [
             handler: async function (request, h) {
                 const userData = request.auth && request.auth.credentials && request.auth.credentials.userData;
                 try {
-                    console.log("hello");
+                    // console.log("hello");
                     
                     return UniversalFunctions.sendSuccess(null, await AdminController.listData(request.query, userData))
                 }

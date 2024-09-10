@@ -164,7 +164,7 @@ async function listData(payloadData, userData) {
             Service.count(findListingModel(payloadData.type), criteria)
         ])
 
-        console.log("data", data);
+        // console.log("data", data);
         
 
         return { data: payloadData.id ? data[0] : data, count };
@@ -177,6 +177,9 @@ async function listData(payloadData, userData) {
 async function addEditSubAdmin(payloadData, userData) {
     try {
         let model = Modal.Admins;
+
+        console.log("payloadData", payloadData );
+        
 
         if (payloadData.phoneNumber) {
             const criteria = {
@@ -211,7 +214,7 @@ async function addEditSubAdmin(payloadData, userData) {
         } else {
             const pass = generatePassword()
             payloadData.password = await cryptData(pass);
-            payloadData.superAdmin = true
+            // payloadData.superAdmin = true
             await Service.saveData(model, payloadData);
 
             const html = `<h3>Welcome to Mobility Ideal Health</span></h3><p><strong>You are added as a User. Please find below credentials for logged In.</strong></p><p>Email: <strong>${payloadData.email}</strong></p><p>Password: <strong>${pass}</strong></p><p>Link: <a href="https://admin.bracetekk.com/">https://admin.bracetekk.com/</a></p><p>Note: You can change your password after logged In</p>`
@@ -424,11 +427,40 @@ async function prescriptions(payloadData, userData) {
         };
 
         let modelName = Modal.Prescriptions;
+        // if (payloadData.search && payloadData.search !== '') {
+        //     criteria.$or = [
+        //         { orderNo: new RegExp(payloadData.search, 'i') },
+        //     ];
+        // }
+
         if (payloadData.search && payloadData.search !== '') {
             criteria.$or = [
-                { orderNo: new RegExp(payloadData.search, 'i') },
+                { orderNo: new RegExp(payloadData.search, 'i') }
             ];
+        
+            const locationQuery = { name: payloadData.search };
+            const locations = await Service.getData(Modal.Locations, locationQuery, { _id: 1 }, { lean: true });
+            if (locations && locations.length > 0) {
+                criteria.$or.push({ appointmentLocationId: { $in: locations.map((location) => location._id) } });
+            }
+        
+            const physicianQuery = { name: payloadData.search };
+            const physicians = await Service.getData(Modal.Physician, physicianQuery, { _id: 1 }, { lean: true });
+            if (physicians && physicians.length > 0) {
+                criteria.$or.push({ renderingPhysicianId: { $in: physicians.map((physician) => physician._id) } });
+            }
+        
+            const lCodeQuery = { code: payloadData.search };
+            const lCodes = await Service.getData(Modal.Codes, lCodeQuery, { _id: 1 }, { lean: true });
+            if (lCodes && lCodes.length > 0) {
+                criteria.$or.push({
+                    'prescriptions': {
+                        $elemMatch: { lCode: { $in: lCodes.map((lCode) => lCode._id) } }
+                    }
+                });
+            }
         }
+        
 
         if (payloadData.id)
             criteria._id = payloadData.id
@@ -466,13 +498,23 @@ async function prescriptions(payloadData, userData) {
         //     criteria.renderingPhysicianId = {$in: physicians.map((physician) => physician._id)}
         // }
 
-        // if(payloadData.search) {
+        // if (payloadData.search) {
         //     const query = { 
         //         code: payloadData.search
+        //     };
+        //     const lCodes = await Service.getData(Modal.Codes, query, { _id: 1 }, { lean: true });
+        //     console.log("Lcodes", lCodes);
+        
+        //     if (lCodes && lCodes.length > 0) {
+        //         criteria.prescriptions = {
+        //             $elemMatch: {
+        //                 lCode: { $in: lCodes.map((lCode) => lCode._id) }
+        //             }
+        //         };
         //     }
-        //     const lCodes= await Service.getData(Modal.Codes,query,{ _id:1 },{lean:true});
-        //     criteria.prescriptions.lCode = {$in: lCodes.map((lCode) => lCode._id)}
         // }
+        
+        
 
         
 
