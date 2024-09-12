@@ -225,7 +225,11 @@ function findListingModel(type) {
             model = Modal.Material;
             break;
         case 10:
-            model = Modal.Inventory
+            model = Modal.Inventory;
+            break;
+        case 12:
+            model = Modal.InvLocations;
+            break;
             
         default:
             break;

@@ -317,7 +317,7 @@ module.exports = [
             tags: ['api', 'admin'],
             validate: {
                 query: {
-                    type : Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material'),
+                    type : Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material, 12- invLocations'),
                     id: Joi.string().trim().description('for single data only'),
                     search: Joi.string().allow(''),
                     mobile: Joi.string().allow(''),
