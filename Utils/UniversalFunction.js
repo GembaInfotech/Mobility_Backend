@@ -252,8 +252,16 @@ async function generateUniqueNo(type) {
         model = Modal.Material;
         prefix = 'M'; 
     }
+    if(type === 11){
+        model = Modal.UOM
+        prefix = 'UOM'
+    }
+    if(type === 12){
+        model = Modal.InvLocations
+        prefix = 'L'
+    }
 
-    let check = await Service.findOne(model, {}, { patientNo: 1, orderNo: 1, materialNo: 1 }, { sort: { _id: -1 } });
+    let check = await Service.findOne(model, {}, { patientNo: 1, orderNo: 1, materialNo: 1, uomNo: 1, locationNo: 1 }, { sort: { _id: -1 } });
 
     let newNumber;
     if (!check) {

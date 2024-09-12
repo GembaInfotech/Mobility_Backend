@@ -588,6 +588,14 @@ async function addEditData(payloadData, userData) {
             model = Modal.Inventory;
             break;
         }
+        case 11:{
+            model = Modal.UOM
+            break;
+        }
+        case 12:{
+            model = Modal.InvLocations
+            break;
+        }
     }
 
     payloadData.lastUpdateBy = userData._id;
@@ -598,6 +606,14 @@ async function addEditData(payloadData, userData) {
         // Generate unique code for new material
         if (payloadData.modelType === 9) {
             payloadData.materialNo = await generateUniqueNo(9); // Pass type 9
+        }
+
+        if(payloadData.modelType === 11){
+            payloadData.uomNo = await generateUniqueNo(11)       
+        }
+
+        if(payloadData.modelType === 12){
+            payloadData.locationNo = await generateUniqueNo(12)       
         }
     }
 

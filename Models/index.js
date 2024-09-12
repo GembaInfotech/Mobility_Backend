@@ -13,6 +13,8 @@ module.exports = {
     Prescriptions: require('./Prescriptions'),
     Locations: require('./Locations'),
     Material:require('./Material'),
-    Inventory:require('./Inventory')
+    Inventory:require('./Inventory'),
+    UOM:require('./UnitOfMeasurement'),
+    InvLocations: require('./InventoryLocation'),
 
 };
