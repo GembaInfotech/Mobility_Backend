@@ -422,6 +422,9 @@ async function listAdminData(payloadData, userData) {
 
 async function prescriptions(payloadData, userData) {
     try {
+
+        console.log("prescription payload data", payloadData );
+        
         const criteria = {
             status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
         };
@@ -466,6 +469,8 @@ async function prescriptions(payloadData, userData) {
             criteria._id = payloadData.id
 
         if(payloadData.nad)
+            console.log("Hello from NAD");
+            
             criteria.nextAppointmentDate = payloadData.nad
 
         if (payloadData.patientId && payloadData.patientId !== '')
