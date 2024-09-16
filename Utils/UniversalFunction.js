@@ -271,7 +271,7 @@ async function generateUniqueNo(type) {
     if (!check) {
         newNumber = startingId; 
     } else {
-        const alreadyId = check.patientNo || check.orderNo || check.materialNo;
+        const alreadyId = check.patientNo || check.orderNo || check.materialNo || check.locationNo;
         let previousNumber = Number(alreadyId.match(/\d+/)); 
         newNumber = previousNumber + 1;
     }
