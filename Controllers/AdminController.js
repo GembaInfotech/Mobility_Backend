@@ -468,10 +468,13 @@ async function prescriptions(payloadData, userData) {
         if (payloadData.id)
             criteria._id = payloadData.id
 
-        if(payloadData.nad)
+        if(payloadData.nad){
             console.log("Hello from NAD");
             
             criteria.nextAppointmentDate = payloadData.nad
+
+            console.log(criteria);
+        }  
 
         if (payloadData.patientId && payloadData.patientId !== '')
             criteria.patientId = payloadData.patientId
@@ -561,6 +564,8 @@ async function prescriptions(payloadData, userData) {
             Service.populateData(modelName, criteria, {}, options, populateData),
             Service.count(modelName, criteria),
         ]);
+
+        console.log("data for nad", data);
 
         return { data: payloadData.id ? data[0] : data, count }
     }
