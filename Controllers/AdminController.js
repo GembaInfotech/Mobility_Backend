@@ -471,20 +471,32 @@ async function prescriptions(payloadData, userData) {
         if (payloadData.nad) {
             console.log("Hello from NAD");
         
-            // Convert the nad string to a Date object
+            // Convert the string '09/25/2024' to a Date object
             let nadDate = new Date(payloadData.nad);
         
             // Check if the conversion was successful
             if (!isNaN(nadDate.getTime())) {
-                // If valid, format it into the correct format
-                // Convert it to ISO format to match your DB date format
-                criteria.nextAppointmentDate = nadDate.toISOString();
+                // Create a formatted string in the desired format (YYYY-MM-DDTHH:mm:ss.sss+00:00)
+                let year = nadDate.getUTCFullYear();
+                let month = String(nadDate.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed, so add 1
+                let day = String(nadDate.getUTCDate()).padStart(2, '0');
+                let hours = String(nadDate.getUTCHours()).padStart(2, '0');
+                let minutes = String(nadDate.getUTCMinutes()).padStart(2, '0');
+                let seconds = String(nadDate.getUTCSeconds()).padStart(2, '0');
+                let milliseconds = String(nadDate.getUTCMilliseconds()).padStart(3, '0');
+        
+                // Construct the final string
+                let formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}+00:00`;
+        
+                // Set the criteria's nextAppointmentDate
+                criteria.nextAppointmentDate = formattedDate;
             } else {
                 console.log("Invalid date format");
             }
         
             console.log(criteria);
         }
+        
         
         if (payloadData.patientId && payloadData.patientId !== '')
             criteria.patientId = payloadData.patientId
