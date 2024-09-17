@@ -8,6 +8,7 @@ const Material = new Schema({
     type: { type: String, required: true },
     group: { type: String, required: true },
     code: { type: String, required: true },
+    uomId : {type: Schema.Types.ObjectId, ref: 'UOM', sparse : true},
     status: { type: Number, default: APP_CONSTANTS.DATABASE.STATUS.ACTIVE },
     description: { type: String, required: true },
     lastUpdateBy: { type: Schema.Types.ObjectId, ref: 'Admins' },

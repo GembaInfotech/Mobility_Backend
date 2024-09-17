@@ -621,6 +621,7 @@ module.exports = [
                     group:Joi.string(),
                     material:Joi.string(),
                     type: Joi.string(),
+                    uomId:  Joi.string(),
                     name: Joi.string(),
                     code: Joi.string(),
                     address: Joi.string(),
