@@ -468,14 +468,24 @@ async function prescriptions(payloadData, userData) {
         if (payloadData.id)
             criteria._id = payloadData.id
 
-        if(payloadData.nad){
+        if (payloadData.nad) {
             console.log("Hello from NAD");
-            
-            criteria.nextAppointmentDate = payloadData.nad
-
+        
+            // Convert the nad string to a Date object
+            let nadDate = new Date(payloadData.nad);
+        
+            // Check if the conversion was successful
+            if (!isNaN(nadDate.getTime())) {
+                // If valid, format it into the correct format
+                // Convert it to ISO format to match your DB date format
+                criteria.nextAppointmentDate = nadDate.toISOString();
+            } else {
+                console.log("Invalid date format");
+            }
+        
             console.log(criteria);
-        }  
-
+        }
+        
         if (payloadData.patientId && payloadData.patientId !== '')
             criteria.patientId = payloadData.patientId
 

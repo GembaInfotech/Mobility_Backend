@@ -227,6 +227,9 @@ function findListingModel(type) {
         case 10:
             model = Modal.Inventory;
             break;
+        case 11:
+            model = Modal.UOM;
+            break;
         case 12:
             model = Modal.InvLocations;
             break;
