@@ -19,8 +19,17 @@ async function exportData(payloadData) {
         if (payloadData.id)
             criteria._id = payloadData.id;
 
-        if (payloadData.nad)
-            criteria.nextAppointmentDate = payloadData.nad;
+        if (payloadData.nad) {
+            console.log("Hello from NAD");
+        
+            // Directly modify the existing criteria object without reassigning
+            criteria.nextAppointmentDate = {
+                $gte: moment(payloadData.nad, 'MM/DD/YYYY').startOf('day').toDate(),  // Start of the day (00:00:00)
+                $lte: moment(payloadData.nad, 'MM/DD/YYYY').endOf('day').toDate(),    // End of the day (23:59:59)
+            };
+        
+            console.log(criteria);
+        }
 
         if (payloadData.patientId && payloadData.patientId !== '')
             criteria.patientId = payloadData.patientId;
