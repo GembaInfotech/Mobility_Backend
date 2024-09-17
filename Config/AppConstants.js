@@ -5,7 +5,7 @@ const SERVER = {
     OTP_MESSAGE : 'Welcome to ! Please enter the following OTP {otp} to verify your account.',
     CRYPTO_SECRET : 'cuZHAoet7Ds7ADhL',
     OTP_SUBJECT : 'Welcome to verification!',
-    SERVER_STORAGE_NAME : process.env.NODE_ENV === 'local' ? './Uploads/' : './home/MIHdevteam/rawData/'
+    SERVER_STORAGE_NAME : process.env.NODE_ENV === 'local' ? './Uploads/' : '/home/MIHdevteam/rawData/'
 };
 
 const DATABASE = {
