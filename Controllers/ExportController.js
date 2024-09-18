@@ -9,31 +9,30 @@ const Services = require('../Services').queries;
 async function exportData(payloadData) {
     try {
         let model, criteria = {
-            createdAt: {
-                $gte: moment(payloadData.startDate, 'MM/DD/YYYY').startOf('day').toDate(),
-                $lte: moment(payloadData.endDate, 'MM/DD/YYYY').endOf('day').toDate(),
-            },
             status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED }
         }, populate = [], fileName = '', columns = [];
 
-        if (payloadData.id)
+        // Add _id filter if provided
+        if (payloadData.id) {
             criteria._id = payloadData.id;
+        }
 
+        // Add nextAppointmentDate filter if provided
         if (payloadData.nad) {
             console.log("Hello from NAD");
-        
-            // Directly modify the existing criteria object without reassigning
             criteria.nextAppointmentDate = {
-                $gte: moment(payloadData.nad, 'MM/DD/YYYY').startOf('day').toDate(),  // Start of the day (00:00:00)
-                $lte: moment(payloadData.nad, 'MM/DD/YYYY').endOf('day').toDate(),    // End of the day (23:59:59)
+                $gte: moment(payloadData.nad, 'MM/DD/YYYY').startOf('day').toDate(),
+                $lte: moment(payloadData.nad, 'MM/DD/YYYY').endOf('day').toDate(),
             };
-        
             console.log(criteria);
         }
 
-        if (payloadData.patientId && payloadData.patientId !== '')
+        // Add patientId filter if provided
+        if (payloadData.patientId && payloadData.patientId !== '') {
             criteria.patientId = payloadData.patientId;
+        }
 
+        // Add patientDob filter if provided
         if (payloadData.patientDob) {
             const query = { 
                 dob: {
@@ -45,35 +44,34 @@ async function exportData(payloadData) {
             criteria.patientId = { $in: patients.map((patient) => patient._id) };
         }
 
-        if ('status' in payloadData)
-            criteria.orderStatus = payloadData.status
-
-        if (payloadData.startDate && payloadData.startDate !== '' && payloadData.endDate && payloadData.endDate !== '') {
-            criteria.createdAt = {
-                $gte: moment(payloadData.startDate, 'MM/DD/YYYY').startOf('day').format(),
-                $lte: moment(payloadData.endDate, 'MM/DD/YYYY').endOf('day').format()
-            }
+        // Add orderStatus filter if provided
+        if ('status' in payloadData) {
+            criteria.orderStatus = payloadData.status;
         }
 
+        // Add createdAt filter only if both startDate and endDate are provided
+        if (payloadData.startDate && payloadData.endDate) {
+            criteria.createdAt = {
+                $gte: moment(payloadData.startDate, 'MM/DD/YYYY').startOf('day').toDate(),
+                $lte: moment(payloadData.endDate, 'MM/DD/YYYY').endOf('day').toDate(),
+            };
+        }
+
+        // Add search filter if provided
         if (payloadData.search && payloadData.search.trim() !== '') {
             criteria.$or = [];
-        
-            // Search in orderNo
             criteria.$or.push({ orderNo: new RegExp(payloadData.search, 'i') });
-        
-            // Search in appointmentLocationId by location name
+
             const locations = await Services.getData(Models.Locations, { name: new RegExp(payloadData.search, 'i') }, { _id: 1 }, { lean: true });
             if (locations && locations.length > 0) {
                 criteria.$or.push({ appointmentLocationId: { $in: locations.map((location) => location._id) } });
             }
-        
-            // Search in renderingPhysicianId by physician name
+
             const physicians = await Services.getData(Models.Physician, { name: new RegExp(payloadData.search, 'i') }, { _id: 1 }, { lean: true });
             if (physicians && physicians.length > 0) {
                 criteria.$or.push({ renderingPhysicianId: { $in: physicians.map((physician) => physician._id) } });
             }
-        
-            // Search in lCode by lCode code
+
             const lCodes = await Services.getData(Models.Codes, { code: new RegExp(payloadData.search, 'i') }, { _id: 1 }, { lean: true });
             if (lCodes && lCodes.length > 0) {
                 criteria.$or.push({
@@ -82,14 +80,33 @@ async function exportData(payloadData) {
                     }
                 });
             }
+        }
+
+        // Add nalId and physicianId filters if provided
+        if (payloadData.nalId && payloadData.nalId !== '') {
+            criteria.appointmentLocationId = payloadData.nalId;
+        }
+        if (payloadData.physicianId && payloadData.physicianId !== '') {
+            criteria.renderingPhysicianId = payloadData.physicianId;
+        }
+
+        if (payloadData.lcodeId && payloadData.lcodeId !== '') {
+            const query = {
+                _id: payloadData.lcodeId
+            };
+            const lCodes = await Services.getData(Models.Codes, query, { _id: 1 }, { lean: true });
+            console.log("Lcodes", lCodes);
         
-            // If none of the criteria match, it will search only by orderNo
-            if (criteria.$or.length === 0) {
-                criteria.$or.push({ orderNo: new RegExp(payloadData.search, 'i') });
+            if (lCodes && lCodes.length > 0) {
+                criteria.prescriptions = {
+                    $elemMatch: {
+                        lCode: { $in: lCodes.map((lCode) => lCode._id) } 
+                    }
+                };
             }
         }
-        
 
+        // Handle different types of exports
         switch (payloadData.type) {
             case 1: {
                 model = Models.Prescriptions;
@@ -110,43 +127,35 @@ async function exportData(payloadData) {
                     { path: 'locationId', model: 'Locations', select: 'name' },
                     { path: 'appointmentLocationId', model: 'Locations', select: 'name' },
                 ];
-                if (payloadData.userId)
+                if (payloadData.userId) {
                     criteria.patientId = payloadData.userId;
+                }
                 break;
             }
         }
 
+        // Fetch and export data
         let data = await Services.populateData(model, criteria, {}, { lean: true, sort: { _id: -1 } }, populate);
-
         if (data && data.length) {
             columns = formatExcelData(payloadData.type);
         }
 
-        data = [
-            {
-                sheet: "data",
-                columns,
-                content: data
-            }
-        ];
-
+        data = [{ sheet: "data", columns, content: data }];
         let settings = {
-            fileName: APP_CONSTANTS.SERVER.SERVER_STORAGE_NAME + 'excelFiles/' + fileName, // Name of the resulting spreadsheet
-            extraLength: 3, // A bigger number means that columns will be wider
-            writeMode: "writeFile", // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
-            writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
-            // RTL: true, // Display the columns from right-to-left (the default value is false)
+            fileName: APP_CONSTANTS.SERVER.SERVER_STORAGE_NAME + 'excelFiles/' + fileName,
+            extraLength: 3,
+            writeMode: "writeFile",
+            writeOptions: {},
         };
 
-        xlsx(data, settings); // Will download the excel file
-
+        xlsx(data, settings);
         return { fileName: `excelFiles/${fileName}.xlsx` };
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e);
         throw e;
     }
 }
+
 
 function formatExcelData(type) {
     try {

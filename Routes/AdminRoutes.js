@@ -139,15 +139,16 @@ module.exports = [
             validate: {
                 payload: {
                     type : Joi.number().required().description('1- Service order,'),
-                    startDate : Joi.string().description('MM/DD/YYYY').required(),
-                    endDate : Joi.string().description('MM/DD/YYYY').required(),
+                    startDate : Joi.string().description('MM/DD/YYYY'),
+                    endDate : Joi.string().description('MM/DD/YYYY'),
                     userId : Joi.string(),
-
-                    // id : Joi.string(),
                     skip : Joi.number(),
                     limit : Joi.number(),
                     status  : Joi.number(),
                     search : Joi.string().allow(''),
+                    nalId: Joi.string().allow(''),
+                    physicianId: Joi.string().allow(''),
+                    lcodeId: Joi.string().allow(''),
                     patientId : Joi.string().allow(''),
                     patientDob : Joi.string().allow(''),
                     nad:Joi.string().allow(''),
@@ -400,6 +401,7 @@ module.exports = [
                     patientId : Joi.string().allow(''),
                     nalId: Joi.string().allow(''),
                     physicianId: Joi.string().allow(''),
+                    lcodeId: Joi.string().allow(''),
                     patientDob : Joi.string().allow(''),
                     nad:Joi.string().allow(''),
                     prescriptionDate: Joi.string().allow(''),
