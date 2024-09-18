@@ -398,6 +398,8 @@ module.exports = [
                     status  : Joi.number(),
                     search : Joi.string().allow(''),
                     patientId : Joi.string().allow(''),
+                    nalId: Joi.string().allow(''),
+                    physicianId: Joi.string().allow(''),
                     patientDob : Joi.string().allow(''),
                     nad:Joi.string().allow(''),
                     prescriptionDate: Joi.string().allow(''),
@@ -616,7 +618,7 @@ module.exports = [
             tags: ['api', 'admin'],
             validate: {
                 payload: {
-                    modelType: Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material, 10- inventory'),
+                    modelType: Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material, 10- stockEntry'),
                     id: Joi.string().trim().description('for edit only'),
                     group:Joi.string(),
                     material:Joi.string(),
@@ -627,6 +629,12 @@ module.exports = [
                     address: Joi.string(),
                     storeManager: Joi.string(),
                     description: Joi.string().allow(''),
+                    materialId: Joi.string(),
+                    stockType: Joi.number(),
+                    warehouseId: Joi.string(),
+                    quantity:Joi.number(),
+                    targetWareHouse: Joi.string().allow(''),
+                    availableQuantity: Joi.string().allow(''),
                 },
                 headers: UniversalFunctions.authorizationHeaderObj,
                 failAction: UniversalFunctions.failActionFunction

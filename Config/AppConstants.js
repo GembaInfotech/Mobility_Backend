@@ -25,6 +25,10 @@ const DATABASE = {
         SELF_PAY : 1,
         FROM_INSURER : 2,
     },
+    STOCK_TYPE : {
+        MATERIAL_RECEIPT : 1,
+        MATERIAL_TRANSFER : 2,
+    },
     SEGMENT_CONSTANT : {
         "Left" : 1 ,
         "Right" : 2 ,

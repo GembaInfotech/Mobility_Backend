@@ -146,6 +146,7 @@ async function listData(payloadData, userData) {
         if (payloadData.type === 9) {
             populate = [
                 { path: "createdBy", select: "name" },
+                { path: "uomId", select: "name" },
             ];
         }
 
@@ -480,10 +481,6 @@ async function prescriptions(payloadData, userData) {
             console.log(criteria);
         }
         
-         
-
-        
-
         if (payloadData.patientId && payloadData.patientId !== '')
             criteria.patientId = payloadData.patientId
 
@@ -498,13 +495,20 @@ async function prescriptions(payloadData, userData) {
             criteria.patientId = {$in: patients.map((patient) => patient._id)}
         }
 
-        // if(payloadData.search) {
+        // if(payloadData.nalId) {
         //     const query = { 
-        //         name: payloadData.search
+        //         appointmentLocationId: payloadData.nalId
         //     }
         //     const locations = await Service.getData(Modal.Locations,query,{ _id:1 },{lean:true});
         //     criteria.appointmentLocationId = {$in: locations.map((location) => location._id)}
         // }
+
+
+        if (payloadData.nalId && payloadData.nalId !== '')
+            criteria.appointmentLocationId = payloadData.nalId
+
+        if (payloadData.physicianId && payloadData.physicianId !== '')
+            criteria.renderingPhysicianId = payloadData.physicianId
 
         // if(payloadData.search) {
         //     const query = { 
@@ -573,7 +577,7 @@ async function prescriptions(payloadData, userData) {
             Service.count(modelName, criteria),
         ]);
 
-        console.log("data for nad", data);
+        // console.log("data for nad", data);
 
         return { data: payloadData.id ? data[0] : data, count }
     }
@@ -583,6 +587,9 @@ async function prescriptions(payloadData, userData) {
 }
 
 async function addEditData(payloadData, userData) {
+
+    console.log("payloadDataaaaaaaaaaa", payloadData);
+    
 
     let model;
     switch (payloadData.modelType) {
@@ -603,7 +610,7 @@ async function addEditData(payloadData, userData) {
             break;
         }
         case 10:{
-            model = Modal.Inventory;
+            model = Modal.StockEntry;
             break;
         }
         case 11:{
