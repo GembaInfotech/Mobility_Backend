@@ -18,9 +18,7 @@ const { sendEmail } = require('../Lib/EmailManager');
 
 async function adminLogin(payloadData) {
     try {
-
-        const criteria = {}
-
+        const criteria = {status : {$ne : APP_CONSTANTS.DATABASE.STATUS.DELETED}}
         criteria.email = payloadData.email
 
         const data = await Service.findOne(Modal.Admins, criteria, {}, { lean: true });
