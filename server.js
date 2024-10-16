@@ -5,6 +5,7 @@ const Routes = require('./Routes');
 const Plugins = require('./Plugins');
 const BootStrap = require('./Utils/BootStrap');
 const { logger } = require('./Lib/LoggerManager');
+const Inert = require('@hapi/inert'); 
 
 const init = async () => {
   const server = Hapi.server({
@@ -16,6 +17,7 @@ const init = async () => {
 
   server.validator(Joi);
   server.route(Routes);
+  await server.register(Inert); 
 
   server.route([
     {

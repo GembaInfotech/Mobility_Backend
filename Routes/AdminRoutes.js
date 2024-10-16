@@ -168,7 +168,57 @@ module.exports = [
         }
     },
 
-
+    {
+        method: 'POST',
+        path: '/admin/update-excel',
+        config: {
+            handler: async function (request, h) {
+                request.payload.language = request.headers.language ? request.headers.language : Config.APP_CONSTANTS.DATABASE.APP_LANGUAGE.English;
+                let userData = request.auth && request.auth.credentials && request.auth.credentials.userData;
+                try {
+                    // Get the response from the controller, which will now include a file stream
+                    const result = await ExportController.updateExcel(request.payload, userData);
+    
+                    // Ensure the result contains necessary data
+                    if (!result || !result.filePath) {
+                        return h.response({ message: 'No file was created.' }).code(500);
+                    }
+    
+                    // Respond with a success message and file path
+                    return h.response({
+                        message: 'File updated and saved successfully',
+                        filePath: result.filePath, // send back the path or filename as needed
+                    }).code(200);
+                } catch (e) {
+                    console.log(e);
+                    return UniversalFunctions.sendError(e);
+                }
+            },
+            description: 'Update Excel Data',
+            auth: 'AdminAuth',
+            tags: ['api'],
+            validate: {
+                payload: Joi.object({
+                    file: Joi.any().meta({ swaggerType: 'file' }).required().description('Excel file to update')
+                }),
+                headers: UniversalFunctions.authorizationHeaderObj,
+                failAction: UniversalFunctions.failActionFunction
+            },
+            payload: {
+                maxBytes: 10485760, // 10MB limit
+                output: 'stream',   // Use stream to capture the file
+                parse: true,        // Parse multipart form-data
+                multipart: true,    // Ensure multipart parsing
+                allow: 'multipart/form-data' // Allow multipart form-data
+            },
+            plugins: {
+                'hapi-swagger': {
+                    payloadType: 'form',
+                    responses: Config.APP_CONSTANTS.swaggerDefaultResponseMessages
+                }
+            }
+        }
+    },
 
     {
         method: 'POST',

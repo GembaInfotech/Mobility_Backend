@@ -5,19 +5,120 @@ const xlsx = require("json-as-xlsx");
 const { APP_CONSTANTS } = require('../Config');
 const Models = require('../Models');
 const Services = require('../Services').queries;
+const XLSX = require('xlsx');
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const writeFile = util.promisify(fs.writeFile);
+const unlinkFile = util.promisify(fs.unlink);
 
+async function updateExcel(payload, userData) {
+    try {
+        const file = payload.file;
+        if (!file) {
+            throw new Error("No file uploaded");
+        }
+
+        console.log("File received:", {
+            filename: file.hapi.filename,
+            headers: file.hapi.headers
+        });
+
+        const uploadsDirectory = path.join(__dirname, '../', APP_CONSTANTS.SERVER.SERVER_STORAGE_NAME + 'excelFiles');
+        const tempFilePath = path.join(uploadsDirectory, file.hapi.filename);
+
+        // Ensure the uploads directory exists
+        if (!fs.existsSync(uploadsDirectory)) {
+            fs.mkdirSync(uploadsDirectory, { recursive: true });
+        }
+
+        // Overwrite the file by saving the file stream to the tempFilePath
+        await writeFile(tempFilePath, file._data);
+
+        // Read the uploaded Excel file from the temporary path
+        const workbook = XLSX.readFile(tempFilePath);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+        // Iterate through the worksheet data to update next appointment details
+        for (let row of worksheet) {
+            const orderNo = row['Order No']; // Assuming 'Order No' is the column header for the order number
+
+            if (orderNo) {
+                // Fetch the order data based on order number
+                const orderData = await Services.getData(Models.Prescriptions, { orderNo }, {}, { lean: true });
+
+                if (orderData && orderData.length > 0) {
+                    const order = orderData[0];
+
+                    // Check if the Order Status is 'ORDER_FULLFILMENT_IN_PROCESS'
+                    if (order.orderStatus === 4) {
+                        console.log("Order status is in process, updating NAD and NAL");
+
+                        // Update Next Appointment Date and Location
+                        row['Next Appointment Date'] = moment(order.nextAppointmentDate).format('MM/DD/YYYY');
+                        if (order.appointmentLocationId) {
+                            const location = await Services.getData(Models.Locations, { _id: order.appointmentLocationId }, {}, { lean: true });
+
+                            // Set the location name in the row if found
+                            row['Next Appointment Location'] = location.length > 0 ? location[0].name : '';
+                        } else {
+                            row['Next Appointment Location'] = ''; // Default to empty string if no location
+                        }
+                    } else {
+                        console.log("Order status is not in process, skipping NAD and NAL update");
+                    }
+                }
+            }
+        }
+
+        console.log("Updated worksheet", worksheet);
+        const updatedSheet = XLSX.utils.json_to_sheet(worksheet);
+
+        // Calculate and adjust column widths (same as before)
+        const columnWidths = {};
+        worksheet.forEach(row => {
+            Object.keys(row).forEach(key => {
+                const contentLength = String(row[key]).length;
+                if (!columnWidths[key] || contentLength > columnWidths[key]) {
+                    columnWidths[key] = contentLength;
+                }
+            });
+        });
+
+        const wscols = Object.entries(columnWidths).map(([key, width]) => ({
+            wpx: width * 7 // Adjust the multiplier as necessary
+        }));
+
+        updatedSheet['!cols'] = wscols;
+
+        workbook.Sheets[sheetName] = updatedSheet;
+
+        // Overwrite the same file in the 'excelFiles' directory
+        XLSX.writeFile(workbook, tempFilePath);
+
+        // Return success message with the path of the updated file
+        return {
+            message: 'File updated and saved successfully',
+            filePath: `excelFiles/${file.hapi.filename}`
+        };
+    } catch (error) {
+        console.error("Error updating Excel:", error);
+        throw error;
+    }
+}
+
+ 
 async function exportData(payloadData) {
     try {
         let model, criteria = {
             status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED }
         }, populate = [], fileName = '', columns = [];
 
-        // Add _id filter if provided
         if (payloadData.id) {
             criteria._id = payloadData.id;
         }
 
-        // Add nextAppointmentDate filter if provided
         if (payloadData.nad) {
             console.log("Hello from NAD");
             criteria.nextAppointmentDate = {
@@ -27,12 +128,10 @@ async function exportData(payloadData) {
             console.log(criteria);
         }
 
-        // Add patientId filter if provided
         if (payloadData.patientId && payloadData.patientId !== '') {
             criteria.patientId = payloadData.patientId;
         }
 
-        // Add patientDob filter if provided
         if (payloadData.patientDob) {
             const query = { 
                 dob: {
@@ -44,12 +143,10 @@ async function exportData(payloadData) {
             criteria.patientId = { $in: patients.map((patient) => patient._id) };
         }
 
-        // Add orderStatus filter if provided
         if ('status' in payloadData) {
             criteria.orderStatus = payloadData.status;
         }
 
-        // Add createdAt filter only if both startDate and endDate are provided
         if (payloadData.startDate && payloadData.endDate) {
             criteria.createdAt = {
                 $gte: moment(payloadData.startDate, 'MM/DD/YYYY').startOf('day').toDate(),
@@ -57,7 +154,6 @@ async function exportData(payloadData) {
             };
         }
 
-        // Add search filter if provided
         if (payloadData.search && payloadData.search.trim() !== '') {
             criteria.$or = [];
             criteria.$or.push({ orderNo: new RegExp(payloadData.search, 'i') });
@@ -82,7 +178,6 @@ async function exportData(payloadData) {
             }
         }
 
-        // Add nalId and physicianId filters if provided
         if (payloadData.nalId && payloadData.nalId !== '') {
             criteria.appointmentLocationId = payloadData.nalId;
         }
@@ -106,7 +201,6 @@ async function exportData(payloadData) {
             }
         }
 
-        // Handle different types of exports
         switch (payloadData.type) {
             case 1: {
                 model = Models.Prescriptions;
@@ -134,7 +228,6 @@ async function exportData(payloadData) {
             }
         }
 
-        // Fetch and export data
         let data = await Services.populateData(model, criteria, {}, { lean: true, sort: { _id: -1 } }, populate);
         if (data && data.length) {
             columns = formatExcelData(payloadData.type);
@@ -156,13 +249,13 @@ async function exportData(payloadData) {
     }
 }
 
-
 function formatExcelData(type) {
     try {
         let columns = [];
         switch (type) {
             case 1: {
                 columns = [
+                    { label: "Order No", value: (row) => `${row?.orderNo}` || '' },
                     { label: "Prescription Date", value: (row) => moment(row.createdAt).format('MM/DD/YYYY') },
                     { label: "Order Status", value: (row) => findKeyByValue(APP_CONSTANTS.DATABASE.ORDER_STATUS, row.orderStatus) },
                     { label: "Patient ID", value: (row) => `${row?.patientId?.patientNo}` || '' },
@@ -220,4 +313,4 @@ function formatUsaPhone(phone) {
     return phone;
 }
 
-module.exports = { exportData };
+module.exports = { exportData, updateExcel };
