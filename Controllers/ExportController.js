@@ -52,7 +52,7 @@ async function updateExcel(payload, userData) {
                     const order = orderData[0];
 
                     // Check if the Order Status is 'ORDER_FULLFILMENT_IN_PROCESS'
-                    if (order.orderStatus === 4) {
+                    if (order.orderStatus !== 9 || order.orderStatus !== 10 || order.orderStatus !== 11 ) {
                         console.log("Order status is in process, updating NAD and NAL");
 
                         // Update Next Appointment Date and Location
