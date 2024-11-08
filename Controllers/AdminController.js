@@ -321,7 +321,7 @@ async function addEditPatient(payloadData, userData) {
             if (payloadData.id) {
                 criteria._id = { $ne: payloadData.id }
             }
-            await checkDuplicate(criteria, model, 'phone');
+            // await checkDuplicate(criteria, model, 'phone');
         }
 
         // if (payloadData.email) {

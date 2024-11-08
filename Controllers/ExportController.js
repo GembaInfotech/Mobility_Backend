@@ -27,43 +27,35 @@ async function updateExcel(payload, userData) {
         const uploadsDirectory = path.join(__dirname, '../', APP_CONSTANTS.SERVER.SERVER_STORAGE_NAME + 'excelFiles');
         const tempFilePath = path.join(uploadsDirectory, file.hapi.filename);
 
-        // Ensure the uploads directory exists
         if (!fs.existsSync(uploadsDirectory)) {
             fs.mkdirSync(uploadsDirectory, { recursive: true });
         }
 
-        // Overwrite the file by saving the file stream to the tempFilePath
         await writeFile(tempFilePath, file._data);
 
-        // Read the uploaded Excel file from the temporary path
         const workbook = XLSX.readFile(tempFilePath);
         const sheetName = workbook.SheetNames[0];
         const worksheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-        // Iterate through the worksheet data to update next appointment details
         for (let row of worksheet) {
-            const orderNo = row['Order No']; // Assuming 'Order No' is the column header for the order number
+            const orderNo = row['Order No'];
 
             if (orderNo) {
-                // Fetch the order data based on order number
                 const orderData = await Services.getData(Models.Prescriptions, { orderNo }, {}, { lean: true });
 
                 if (orderData && orderData.length > 0) {
                     const order = orderData[0];
 
-                    // Check if the Order Status is 'ORDER_FULLFILMENT_IN_PROCESS'
-                    if (order.orderStatus !== 9 || order.orderStatus !== 10 || order.orderStatus !== 11 ) {
+                    if (order.orderStatus !== 9 || order.orderStatus !== 10 || order.orderStatus !== 11) {
                         console.log("Order status is in process, updating NAD and NAL");
 
-                        // Update Next Appointment Date and Location
                         row['Next Appointment Date'] = moment(order.nextAppointmentDate).format('MM/DD/YYYY');
                         if (order.appointmentLocationId) {
                             const location = await Services.getData(Models.Locations, { _id: order.appointmentLocationId }, {}, { lean: true });
 
-                            // Set the location name in the row if found
                             row['Next Appointment Location'] = location.length > 0 ? location[0].name : '';
                         } else {
-                            row['Next Appointment Location'] = ''; // Default to empty string if no location
+                            row['Next Appointment Location'] = '';
                         }
                     } else {
                         console.log("Order status is not in process, skipping NAD and NAL update");
@@ -76,21 +68,34 @@ async function updateExcel(payload, userData) {
         const updatedSheet = XLSX.utils.json_to_sheet(worksheet);
 
         // Calculate and adjust column widths (same as before)
+        // Calculate and adjust column widths based on character length
+        // Calculate and adjust column widths based on both header and content length
         const columnWidths = {};
+        const headers = Object.keys(worksheet[0]); // Assuming the first row has all headers
+
+        // Set initial width based on headers
+        headers.forEach(header => {
+            columnWidths[header] = header.length; // Set initial width to the header length
+        });
+
+        // Update width based on content in each row
         worksheet.forEach(row => {
             Object.keys(row).forEach(key => {
-                const contentLength = String(row[key]).length;
-                if (!columnWidths[key] || contentLength > columnWidths[key]) {
+                const contentLength = String(row[key] || '').length;
+                if (contentLength > columnWidths[key]) {
                     columnWidths[key] = contentLength;
                 }
             });
         });
 
-        const wscols = Object.entries(columnWidths).map(([key, width]) => ({
-            wpx: width * 7 // Adjust the multiplier as necessary
+        // Set the width in characters (wch), accounting for both headers and data
+        const wscols = headers.map(header => ({
+            wch: Math.min(columnWidths[header] + 2, 30)  // Add padding, limit width if necessary
         }));
 
         updatedSheet['!cols'] = wscols;
+
+
 
         workbook.Sheets[sheetName] = updatedSheet;
 
@@ -108,7 +113,7 @@ async function updateExcel(payload, userData) {
     }
 }
 
- 
+
 async function exportData(payloadData) {
     try {
         let model, criteria = {
@@ -133,7 +138,7 @@ async function exportData(payloadData) {
         }
 
         if (payloadData.patientDob) {
-            const query = { 
+            const query = {
                 dob: {
                     $gte: moment(payloadData.patientDob, 'MM/DD/YYYY').startOf('day').toDate(),
                     $lte: moment(payloadData.patientDob, 'MM/DD/YYYY').endOf('day').toDate(),
@@ -191,11 +196,11 @@ async function exportData(payloadData) {
             };
             const lCodes = await Services.getData(Models.Codes, query, { _id: 1 }, { lean: true });
             console.log("Lcodes", lCodes);
-        
+
             if (lCodes && lCodes.length > 0) {
                 criteria.prescriptions = {
                     $elemMatch: {
-                        lCode: { $in: lCodes.map((lCode) => lCode._id) } 
+                        lCode: { $in: lCodes.map((lCode) => lCode._id) }
                     }
                 };
             }
@@ -275,6 +280,8 @@ function formatExcelData(type) {
                     { label: "Rendering Physician Name", value: (row) => row.renderingPhysicianId?.name || '' },
                     { label: 'Device Type', value: (row) => row?.prescriptions[0]?.deviceType?.name },
                     { label: 'L code', value: (row) => row?.prescriptions[0]?.lCode?.code },
+                    // { label: 'L code description', value: (row) => row?.prescriptions[0]?.lCode?.description },
+
                     {
                         label: 'Icd Codes',
                         value: (row) => (row?.prescriptions[0]?.icdCode?.map((icd) => icd?.code)).join(', '),
