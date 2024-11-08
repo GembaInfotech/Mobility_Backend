@@ -280,7 +280,7 @@ function formatExcelData(type) {
                     { label: "Rendering Physician Name", value: (row) => row.renderingPhysicianId?.name || '' },
                     { label: 'Device Type', value: (row) => row?.prescriptions[0]?.deviceType?.name },
                     { label: 'L code', value: (row) => row?.prescriptions[0]?.lCode?.code },
-                    // { label: 'L code description', value: (row) => row?.prescriptions[0]?.lCode?.description },
+                    { label: 'L code description', value: (row) => row?.prescriptions[0]?.lCode?.description },
 
                     {
                         label: 'Icd Codes',
