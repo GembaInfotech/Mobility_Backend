@@ -56,6 +56,7 @@ const DATABASE = {
         BILLED: 9,
         RNR: 10,
         DENIED: 11,
+        DROPSHIP_IN_PROCESS: 12
     },
     MEDIA_UPLOAD_TYPE : {
         ORDERS : 1,
