@@ -582,6 +582,7 @@ async function prescriptions(payloadData, userData) {
             { path: 'renderingPhysicianId', model: 'Physicians', select: 'name fax npiNo address phoneNumber countryCode' },
             { path: 'locationId', model: 'Locations', select: 'name' },
             { path: 'appointmentLocationId', model: 'Locations', select: 'name' },
+            { path: 'commentAddedBy', model:'Admins', select:'email'},
         ]
 
         const [data, count] = await Promise.all([
@@ -667,6 +668,9 @@ async function addEditPrescription(payloadData, userData) {
     let model = Modal.Prescriptions, dataToSet = {};
     payloadData.lastUpdateBy = userData._id;
 
+    if(payloadData.id && payloadData.orderStatus){
+        payloadData.commentAddedBy = userData._id;
+    }
     if (payloadData.prescriptions) {
         payloadData.prescriptions = JSON.parse(payloadData.prescriptions)
     };

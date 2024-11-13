@@ -28,9 +28,10 @@ const Prescriptions = new Schema({
        
     },
     orderStatus : {type: Number, default: APP_CONSTANTS.DATABASE.ORDER_STATUS.REFERRAL_SENT},
+    addComment: {type:String},
     notes :{type: String},
-    status :{type: Number, default : APP_CONSTANTS.DATABASE.STATUS.ACTIVE}
-
+    status :{type: Number, default : APP_CONSTANTS.DATABASE.STATUS.ACTIVE},
+    commentAddedBy: { type: Schema.Types.ObjectId, ref: 'Admins' },
 },{
     timestamps : true
 });

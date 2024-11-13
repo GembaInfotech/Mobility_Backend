@@ -507,6 +507,7 @@ module.exports = [
                     prescriptions: Joi.string(),
                     insuranceType : Joi.number(),
                     orderStatus : Joi.number(),
+                    addComment : Joi.string().allow(''),
                     nextAppointmentDate : Joi.string(),
                     primaryInsurance : Joi.string(),
                     secondaryInsurance : Joi.string(),
