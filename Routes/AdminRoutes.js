@@ -677,6 +677,8 @@ module.exports = [
                     material:Joi.string(),
                     type: Joi.string(),
                     uomId:  Joi.string(),
+                    lcodeId: Joi.string(),
+                    locationId: Joi.string(),
                     name: Joi.string(),
                     code: Joi.string(),
                     address: Joi.string(),

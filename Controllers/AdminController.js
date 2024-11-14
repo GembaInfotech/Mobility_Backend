@@ -148,6 +148,15 @@ async function listData(payloadData, userData) {
             ];
         }
 
+        if (payloadData.type === 10) {
+            populate = [
+                { path: "createdBy", select: "name" },
+                { path: "lastUpdateBy", select: "name" },
+                { path: "lcodeId", select: "code description" },
+                { path: "locationId", select: "name" },
+            ];
+        }
+
         if (payloadData.createdBy && payloadData.createdBy !== '') {
             criteria.$or = [
                 { material: { $regex: payloadData.createdBy, $options: 'i' } }
@@ -163,9 +172,8 @@ async function listData(payloadData, userData) {
             Service.count(findListingModel(payloadData.type), criteria)
         ])
 
-        // console.log("data", data);
+        console.log("data", data);
         
-
         return { data: payloadData.id ? data[0] : data, count };
     }
     catch (e) {
