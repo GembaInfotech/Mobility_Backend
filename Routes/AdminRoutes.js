@@ -372,6 +372,7 @@ module.exports = [
                     id: Joi.string().trim().description('for single data only'),
                     search: Joi.string().allow(''),
                     mobile: Joi.string().allow(''),
+                    locationId : Joi.string().allow(''),
                     patientDob : Joi.string().allow(''),
                     createdBy: Joi.string().allow(''),
                     codeType : Joi.number(),
