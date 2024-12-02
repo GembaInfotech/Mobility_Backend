@@ -325,6 +325,22 @@ const STATUS_MSG = {
                 [DATABASE.APP_LANGUAGE.Arabic]  : 'You are not authorised to this action.',
             },
             type: 'NOT_AUTHORISED'
+        },
+        LOW_LCODE_QUANTITY: {
+            statusCode: 400,
+            customMessage: {
+                [DATABASE.APP_LANGUAGE.English]  : 'Insufficient Lcode quantity in stock.',
+                [DATABASE.APP_LANGUAGE.Arabic]  : 'Insufficient Lcode quantity in stock.',
+            },
+            type: 'LOW_LCODE_QUANTITY'
+        },
+        NO_STOCK_STATION: {
+            statusCode: 400,
+            customMessage: {
+                [DATABASE.APP_LANGUAGE.English]  : 'No stock station is available for this location or LCode.',
+                [DATABASE.APP_LANGUAGE.Arabic]  : 'No stock station is available for this location or LCode.',
+            },
+            type: 'NO_STOCK_STATION'
         }
 
     },

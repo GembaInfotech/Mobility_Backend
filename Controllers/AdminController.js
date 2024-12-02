@@ -162,6 +162,9 @@ async function listData(payloadData, userData) {
                 { material: { $regex: payloadData.createdBy, $options: 'i' } }
             ];
         }
+        if(payloadData.locationId){
+            criteria.locationId = payloadData.locationId
+        }
         
         if (payloadData.type === 7 && !payloadData.id) {
             criteria._id = { $ne: userData._id }
@@ -172,7 +175,7 @@ async function listData(payloadData, userData) {
             Service.count(findListingModel(payloadData.type), criteria)
         ])
 
-        console.log("data", data);
+        // console.log("data", data);
         
         return { data: payloadData.id ? data[0] : data, count };
     }
@@ -678,6 +681,22 @@ async function addEditPrescription(payloadData, userData) {
 
     if(payloadData.id && payloadData.orderStatus){
         payloadData.commentAddedBy = userData._id;
+    }
+    if(payloadData.orderStatus === 7 && payloadData.NALId && payloadData.lcodeQuantity && payloadData.lcodeId){
+        let criteria = {
+            lcodeId: payloadData.lcodeId,
+            locationId: payloadData.NALId,
+        };
+        const StockData = await Service.findOne(Modal.StockEntry, criteria, {}, { lean: true });
+        if(!StockData){
+            throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
+        }
+        const quantity = StockData.quantity - payloadData.lcodeQuantity
+        if(quantity>= 0){
+            await Service.findAndUpdate(Modal.StockEntry, { _id: StockData._id }, {quantity:quantity} , { new: true });
+        }else{
+            throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
+        }
     }
     if (payloadData.prescriptions) {
         payloadData.prescriptions = JSON.parse(payloadData.prescriptions)
