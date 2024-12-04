@@ -683,20 +683,40 @@ async function addEditPrescription(payloadData, userData) {
         payloadData.commentAddedBy = userData._id;
     }
     if(payloadData.orderStatus === 7 && payloadData.NALId && payloadData.lcodeQuantity && payloadData.lcodeId){
+
         let criteria = {
-            lcodeId: payloadData.lcodeId,
+            lcodeId: { $in: payloadData.lcodeId }, 
             locationId: payloadData.NALId,
         };
-        const StockData = await Service.findOne(Modal.StockEntry, criteria, {}, { lean: true });
-        if(!StockData){
+
+        const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
+        console.log("stockData", StockData);
+        
+        if (!StockData || StockData.length === 0 || payloadData.lcodeQuantity.length !== StockData.length) {
             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
         }
-        const quantity = StockData.quantity - payloadData.lcodeQuantity
-        if(quantity>= 0){
-            await Service.findAndUpdate(Modal.StockEntry, { _id: StockData._id }, {quantity:quantity} , { new: true });
-        }else{
-            throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
+        
+        const updates = [];
+        for (let i = 0; i < StockData.length; i++) {
+            const stock = StockData[i];
+            const quantityToDeduct = Number(payloadData.lcodeQuantity[i]);
+        
+            const remainingQuantity = stock.quantity - quantityToDeduct;
+        
+            if (remainingQuantity < 0) {
+                throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
+            }
+        
+            updates.push(
+                Service.findAndUpdate(
+                    Modal.StockEntry,
+                    { _id: stock._id },
+                    { quantity: remainingQuantity },
+                    { new: true }
+                )
+            );
         }
+        await Promise.all(updates);  
     }
     if (payloadData.prescriptions) {
         payloadData.prescriptions = JSON.parse(payloadData.prescriptions)
