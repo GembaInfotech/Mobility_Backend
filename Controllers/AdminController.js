@@ -124,7 +124,7 @@ async function listData(payloadData, userData) {
         const options = {
             sort: { _id: -1 },
             lean: true,
-            limit: 10,
+            // limit: 10,
             skip: 0,
         }
         if (payloadData.limit) {
