@@ -687,20 +687,31 @@ async function addEditPrescription(payloadData, userData) {
         let criteria = {
             lcodeId: { $in: payloadData.lcodeId }, 
             locationId: payloadData.NALId,
-        };
-
-        const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
+          };
+          
+          const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
+          
+          // Map the stock data by lcodeId
+          const stockDataMap = StockData.reduce((acc, item) => {
+            acc[item.lcodeId] = item;
+            return acc;
+          }, {});
+          
+          // Reorder the stock data based on the order of payloadData.lcodeId
+          const orderedStockData = payloadData.lcodeId.map(lcodeId => stockDataMap[lcodeId]);
+          
+          console.log(orderedStockData);
         console.log("stockData", StockData);
         
-        if (!StockData || StockData.length === 0 || payloadData.lcodeQuantity.length !== StockData.length) {
+        if (!orderedStockData || orderedStockData.length === 0 || payloadData.lcodeQuantity.length !== orderedStockData.length) {
             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
         }
         
         const updates = [];
-        for (let i = 0; i < StockData.length; i++) {
-            const stock = StockData[i];
+        for (let i = 0; i < orderedStockData.length; i++) {
+            const stock = orderedStockData[i];
             const quantityToDeduct = Number(payloadData.lcodeQuantity[i]);
-        
+            console.log(stock.quantity, quantityToDeduct)        
             const remainingQuantity = stock.quantity - quantityToDeduct;
         
             if (remainingQuantity < 0) {
