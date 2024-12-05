@@ -699,10 +699,10 @@ async function addEditPrescription(payloadData, userData) {
           // Reorder the stock data 
           const orderedStockData = payloadData.lcodeId.map(lcodeId => stockDataMap[lcodeId]);
           
-          console.log(orderedStockData);
+          console.log("order status", orderedStockData);
         console.log("stockData", StockData);
         
-        if (!orderedStockData || orderedStockData.length === 0 || payloadData.lcodeQuantity.length !== orderedStockData.length) {
+        if (!orderedStockData || orderedStockData.length === 0 || payloadData.lcodeQuantity.length !== StockData.length) {
             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
         }
         
