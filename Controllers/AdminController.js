@@ -684,8 +684,10 @@ async function addEditPrescription(payloadData, userData) {
     }
     if(payloadData.orderStatus === 7 && payloadData.NALId && payloadData.lcodeQuantity && payloadData.lcodeId){
 
+        const lcodeQuantities = JSON.parse(payloadData.lcodeQuantity);
+        const lcodeIds = JSON.parse(payloadData.lcodeId);
         let criteria = {
-            lcodeId: { $in: payloadData.lcodeId }, 
+            lcodeId: { $in:lcodeIds }, 
             locationId: payloadData.NALId,
           };
           
@@ -696,20 +698,16 @@ async function addEditPrescription(payloadData, userData) {
             return acc;
           }, {});
           
-          // Reorder the stock data 
-          const orderedStockData = payloadData.lcodeId.map(lcodeId => stockDataMap[lcodeId]);
-          
-          console.log("order status", orderedStockData);
-        console.log("stockData", StockData);
+          const orderedStockData = lcodeIds.map(lcodeId => stockDataMap[lcodeId]);
         
-        if (!orderedStockData || orderedStockData.length === 0 || payloadData.lcodeQuantity.length !== StockData.length) {
+        if (!orderedStockData || orderedStockData.length === 0 || lcodeQuantities.length !== StockData.length) {
             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
         }
         
         const updates = [];
         for (let i = 0; i < orderedStockData.length; i++) {
             const stock = orderedStockData[i];
-            const quantityToDeduct = Number(payloadData.lcodeQuantity[i]);
+            const quantityToDeduct = Number(lcodeQuantities[i]);
             console.log(stock.quantity, quantityToDeduct)        
             const remainingQuantity = stock.quantity - quantityToDeduct;
         
@@ -729,7 +727,7 @@ async function addEditPrescription(payloadData, userData) {
 
         for (let i = 0; i < orderedStockData.length; i++) {
             const stock = orderedStockData[i];
-            const quantityToDeduct = Number(payloadData.lcodeQuantity[i]);
+            const quantityToDeduct = Number(lcodeQuantities[i]);
             console.log(stock.quantity, quantityToDeduct)        
             const remainingQuantity = stock.quantity - quantityToDeduct;
         
