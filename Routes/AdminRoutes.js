@@ -504,7 +504,7 @@ module.exports = [
                     renderingPhysicianId: Joi.string(),
                     locationId: Joi.string(),
                     NALId: Joi.string(),
-                    lcodeQuantity: Joi.array().items(Joi.string()), 
+                    lcodeQuantity: Joi.array().items(Joi.string().required()), 
                     lcodeId: Joi.array().items(Joi.string().required()),
                     appointmentLocationId: Joi.string(),
                     physicianNotes: Joi.boolean(),

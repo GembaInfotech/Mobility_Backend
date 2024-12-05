@@ -7,6 +7,7 @@ const BootStrap = require('./Utils/BootStrap');
 const { logger } = require('./Lib/LoggerManager');
 const Inert = require('@hapi/inert'); 
 
+
 const init = async () => {
   const server = Hapi.server({
     port: Config.dbConfig.config.PORT,
@@ -14,6 +15,7 @@ const init = async () => {
   });
 
   await server.register(Plugins);
+
 
   server.validator(Joi);
   server.route(Routes);

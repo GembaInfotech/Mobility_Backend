@@ -691,13 +691,12 @@ async function addEditPrescription(payloadData, userData) {
           
           const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
           
-          // Map the stock data by lcodeId
           const stockDataMap = StockData.reduce((acc, item) => {
             acc[item.lcodeId] = item;
             return acc;
           }, {});
           
-          // Reorder the stock data based on the order of payloadData.lcodeId
+          // Reorder the stock data 
           const orderedStockData = payloadData.lcodeId.map(lcodeId => stockDataMap[lcodeId]);
           
           console.log(orderedStockData);
@@ -717,6 +716,26 @@ async function addEditPrescription(payloadData, userData) {
             if (remainingQuantity < 0) {
                 throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
             }
+        
+            // updates.push(
+            //     Service.findAndUpdate(
+            //         Modal.StockEntry,
+            //         { _id: stock._id },
+            //         { quantity: remainingQuantity },
+            //         { new: true }
+            //     )
+            // );
+        }
+
+        for (let i = 0; i < orderedStockData.length; i++) {
+            const stock = orderedStockData[i];
+            const quantityToDeduct = Number(payloadData.lcodeQuantity[i]);
+            console.log(stock.quantity, quantityToDeduct)        
+            const remainingQuantity = stock.quantity - quantityToDeduct;
+        
+            // if (remainingQuantity < 0) {
+            //     throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
+            // }
         
             updates.push(
                 Service.findAndUpdate(
