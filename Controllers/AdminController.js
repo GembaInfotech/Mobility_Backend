@@ -682,70 +682,70 @@ async function addEditPrescription(payloadData, userData) {
     if(payloadData.id && payloadData.orderStatus){
         payloadData.commentAddedBy = userData._id;
     }
-    if(payloadData.orderStatus === 7 && payloadData.NALId && payloadData.lcodeQuantity && payloadData.lcodeId){
+    // if(payloadData.orderStatus === 7 && payloadData.NALId && payloadData.lcodeQuantity && payloadData.lcodeId){
 
-        const lcodeQuantities = JSON.parse(payloadData.lcodeQuantity);
-        const lcodeIds = JSON.parse(payloadData.lcodeId);
-        let criteria = {
-            lcodeId: { $in:lcodeIds }, 
-            locationId: payloadData.NALId,
-          };
+    //     const lcodeQuantities = JSON.parse(payloadData.lcodeQuantity);
+    //     const lcodeIds = JSON.parse(payloadData.lcodeId);
+    //     let criteria = {
+    //         lcodeId: { $in:lcodeIds }, 
+    //         locationId: payloadData.NALId,
+    //       };
           
-          const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
+    //       const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
           
-          const stockDataMap = StockData.reduce((acc, item) => {
-            acc[item.lcodeId] = item;
-            return acc;
-          }, {});
+    //       const stockDataMap = StockData.reduce((acc, item) => {
+    //         acc[item.lcodeId] = item;
+    //         return acc;
+    //       }, {});
           
-          const orderedStockData = lcodeIds.map(lcodeId => stockDataMap[lcodeId]);
+    //       const orderedStockData = lcodeIds.map(lcodeId => stockDataMap[lcodeId]);
         
-        if (!orderedStockData || orderedStockData.length === 0 || lcodeQuantities.length !== StockData.length) {
-            throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
-        }
+    //     if (!orderedStockData || orderedStockData.length === 0 || lcodeQuantities.length !== StockData.length) {
+    //         throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
+    //     }
         
-        const updates = [];
-        for (let i = 0; i < orderedStockData.length; i++) {
-            const stock = orderedStockData[i];
-            const quantityToDeduct = Number(lcodeQuantities[i]);
-            console.log(stock.quantity, quantityToDeduct)        
-            const remainingQuantity = stock.quantity - quantityToDeduct;
+    //     const updates = [];
+    //     for (let i = 0; i < orderedStockData.length; i++) {
+    //         const stock = orderedStockData[i];
+    //         const quantityToDeduct = Number(lcodeQuantities[i]);
+    //         console.log(stock.quantity, quantityToDeduct)        
+    //         const remainingQuantity = stock.quantity - quantityToDeduct;
         
-            if (remainingQuantity < 0) {
-                throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
-            }
+    //         if (remainingQuantity < 0) {
+    //             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
+    //         }
         
-            // updates.push(
-            //     Service.findAndUpdate(
-            //         Modal.StockEntry,
-            //         { _id: stock._id },
-            //         { quantity: remainingQuantity },
-            //         { new: true }
-            //     )
-            // );
-        }
+    //         // updates.push(
+    //         //     Service.findAndUpdate(
+    //         //         Modal.StockEntry,
+    //         //         { _id: stock._id },
+    //         //         { quantity: remainingQuantity },
+    //         //         { new: true }
+    //         //     )
+    //         // );
+    //     }
 
-        for (let i = 0; i < orderedStockData.length; i++) {
-            const stock = orderedStockData[i];
-            const quantityToDeduct = Number(lcodeQuantities[i]);
-            console.log(stock.quantity, quantityToDeduct)        
-            const remainingQuantity = stock.quantity - quantityToDeduct;
+    //     for (let i = 0; i < orderedStockData.length; i++) {
+    //         const stock = orderedStockData[i];
+    //         const quantityToDeduct = Number(lcodeQuantities[i]);
+    //         console.log(stock.quantity, quantityToDeduct)        
+    //         const remainingQuantity = stock.quantity - quantityToDeduct;
         
-            // if (remainingQuantity < 0) {
-            //     throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
-            // }
+    //         // if (remainingQuantity < 0) {
+    //         //     throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
+    //         // }
         
-            updates.push(
-                Service.findAndUpdate(
-                    Modal.StockEntry,
-                    { _id: stock._id },
-                    { quantity: remainingQuantity },
-                    { new: true }
-                )
-            );
-        }
-        await Promise.all(updates);  
-    }
+    //         updates.push(
+    //             Service.findAndUpdate(
+    //                 Modal.StockEntry,
+    //                 { _id: stock._id },
+    //                 { quantity: remainingQuantity },
+    //                 { new: true }
+    //             )
+    //         );
+    //     }
+    //     await Promise.all(updates);  
+    // }
     if (payloadData.prescriptions) {
         payloadData.prescriptions = JSON.parse(payloadData.prescriptions)
     };
