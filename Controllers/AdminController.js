@@ -18,7 +18,7 @@ const { sendEmail } = require('../Lib/EmailManager');
 
 async function adminLogin(payloadData) {
     try {
-        const criteria = {status : {$ne : APP_CONSTANTS.DATABASE.STATUS.DELETED}}
+        const criteria = { status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED } }
         criteria.email = payloadData.email
 
         const data = await Service.findOne(Modal.Admins, criteria, {}, { lean: true });
@@ -94,7 +94,7 @@ async function blockDeleteData(payloadData, userData) {
 
 async function listData(payloadData, userData) {
     try {
-        
+
         const criteria = { status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED } };
 
         if (payloadData.search && payloadData.search !== '') {
@@ -108,13 +108,13 @@ async function listData(payloadData, userData) {
         }
 
         if (payloadData.mobile && payloadData.mobile !== '') {
-            criteria.$or= [
+            criteria.$or = [
                 { phoneNumber: { $regex: payloadData.mobile, $options: 'i' } }
             ];
         }
 
         if (payloadData.id) criteria._id = payloadData.id
-        if(payloadData.patientDob)criteria.dob = {
+        if (payloadData.patientDob) criteria.dob = {
             $gte: moment(payloadData.patientDob, 'MM/DD/YYYY').startOf('day').toDate(),
             $lte: moment(payloadData.patientDob, 'MM/DD/YYYY').endOf('day').toDate(),
         }
@@ -162,10 +162,10 @@ async function listData(payloadData, userData) {
                 { material: { $regex: payloadData.createdBy, $options: 'i' } }
             ];
         }
-        if(payloadData.locationId){
+        if (payloadData.locationId) {
             criteria.locationId = payloadData.locationId
         }
-        
+
         if (payloadData.type === 7 && !payloadData.id) {
             criteria._id = { $ne: userData._id }
         }
@@ -176,7 +176,7 @@ async function listData(payloadData, userData) {
         ])
 
         // console.log("data", data);
-        
+
         return { data: payloadData.id ? data[0] : data, count };
     }
     catch (e) {
@@ -188,8 +188,8 @@ async function addEditSubAdmin(payloadData, userData) {
     try {
         let model = Modal.Admins;
 
-        console.log("payloadData", payloadData );
-        
+        // console.log("payloadData", payloadData);
+
 
         if (payloadData.phoneNumber) {
             const criteria = {
@@ -214,10 +214,10 @@ async function addEditSubAdmin(payloadData, userData) {
         }
         payloadData.lastUpdateBy = userData._id;
 
-        if(payloadData.roles){
+        if (payloadData.roles) {
             payloadData.roles = JSON.parse(payloadData.roles)
         }
-    
+
         if (payloadData.adminId) {
             await Service.findAndUpdate(model, { _id: payloadData.adminId }, payloadData, {})
 
@@ -433,8 +433,8 @@ async function listAdminData(payloadData, userData) {
 async function prescriptions(payloadData, userData) {
     try {
 
-        console.log("prescription payload data", payloadData );
-        
+        // console.log("prescription payload data", payloadData);
+
         const criteria = {
             status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
         };
@@ -450,19 +450,19 @@ async function prescriptions(payloadData, userData) {
             criteria.$or = [
                 { orderNo: new RegExp(payloadData.search, 'i') }
             ];
-        
+
             const locationQuery = { name: payloadData.search };
             const locations = await Service.getData(Modal.Locations, locationQuery, { _id: 1 }, { lean: true });
             if (locations && locations.length > 0) {
                 criteria.$or.push({ appointmentLocationId: { $in: locations.map((location) => location._id) } });
             }
-        
+
             const physicianQuery = { name: payloadData.search };
             const physicians = await Service.getData(Modal.Physician, physicianQuery, { _id: 1 }, { lean: true });
             if (physicians && physicians.length > 0) {
                 criteria.$or.push({ renderingPhysicianId: { $in: physicians.map((physician) => physician._id) } });
             }
-        
+
             const lCodeQuery = { code: payloadData.search };
             const lCodes = await Service.getData(Modal.Codes, lCodeQuery, { _id: 1 }, { lean: true });
             if (lCodes && lCodes.length > 0) {
@@ -473,35 +473,35 @@ async function prescriptions(payloadData, userData) {
                 });
             }
         }
-        
+
 
         if (payloadData.id)
             criteria._id = payloadData.id
 
         if (payloadData.nad) {
-            console.log("Hello from NAD");
-        
+            // console.log("Hello from NAD");
+
             // Directly modify the existing criteria object without reassigning
             criteria.nextAppointmentDate = {
                 $gte: moment(payloadData.nad, 'MM/DD/YYYY').startOf('day').toDate(),  // Start of the day (00:00:00)
                 $lte: moment(payloadData.nad, 'MM/DD/YYYY').endOf('day').toDate(),    // End of the day (23:59:59)
             };
-        
-            console.log(criteria);
+
+            // console.log(criteria);
         }
-        
+
         if (payloadData.patientId && payloadData.patientId !== '')
             criteria.patientId = payloadData.patientId
 
-        if(payloadData.patientDob) {
-            const query = { 
-                dob : {
+        if (payloadData.patientDob) {
+            const query = {
+                dob: {
                     $gte: moment(payloadData.patientDob, 'MM/DD/YYYY').startOf('day').toDate(),
                     $lte: moment(payloadData.patientDob, 'MM/DD/YYYY').endOf('day').toDate(),
                 }
             }
-            const patients = await Service.getData(Modal.Patients,query,{ _id:1 },{lean:true});
-            criteria.patientId = {$in: patients.map((patient) => patient._id)}
+            const patients = await Service.getData(Modal.Patients, query, { _id: 1 }, { lean: true });
+            criteria.patientId = { $in: patients.map((patient) => patient._id) }
         }
 
 
@@ -511,7 +511,7 @@ async function prescriptions(payloadData, userData) {
         if (payloadData.physicianId && payloadData.physicianId !== '')
             criteria.renderingPhysicianId = payloadData.physicianId
 
-        
+
 
 
         if (payloadData.lcodeId && payloadData.lcodeId !== '') {
@@ -519,19 +519,19 @@ async function prescriptions(payloadData, userData) {
                 _id: payloadData.lcodeId
             };
             const lCodes = await Service.getData(Modal.Codes, query, { _id: 1 }, { lean: true });
-            console.log("Lcodes", lCodes);
-        
+            // console.log("Lcodes", lCodes);
+
             if (lCodes && lCodes.length > 0) {
                 criteria.prescriptions = {
                     $elemMatch: {
-                        lCode: { $in: lCodes.map((lCode) => lCode._id) } 
+                        lCode: { $in: lCodes.map((lCode) => lCode._id) }
                     }
                 };
             }
         }
-        
 
-        
+
+
 
         // if(payloadData.search) {
         //     const query = { 
@@ -547,7 +547,7 @@ async function prescriptions(payloadData, userData) {
         //     };
         //     const lCodes = await Service.getData(Modal.Codes, query, { _id: 1 }, { lean: true });
         //     console.log("Lcodes", lCodes);
-        
+
         //     if (lCodes && lCodes.length > 0) {
         //         criteria.prescriptions = {
         //             $elemMatch: {
@@ -556,10 +556,10 @@ async function prescriptions(payloadData, userData) {
         //         };
         //     }
         // }
-        
-        
 
-        
+
+
+
 
         if ('status' in payloadData)
             criteria.orderStatus = payloadData.status
@@ -593,7 +593,7 @@ async function prescriptions(payloadData, userData) {
             { path: 'renderingPhysicianId', model: 'Physicians', select: 'name fax npiNo address phoneNumber countryCode' },
             { path: 'locationId', model: 'Locations', select: 'name' },
             { path: 'appointmentLocationId', model: 'Locations', select: 'name' },
-            { path: 'commentAddedBy', model:'Admins', select:'email'},
+            { path: 'commentAddedBy', model: 'Admins', select: 'email' },
         ]
 
         const [data, count] = await Promise.all([
@@ -611,10 +611,6 @@ async function prescriptions(payloadData, userData) {
 }
 
 async function addEditData(payloadData, userData) {
-
-    console.log("payloadDataaaaaaaaaaa", payloadData);
-    
-
     let model;
     switch (payloadData.modelType) {
         case 1: {
@@ -629,19 +625,19 @@ async function addEditData(payloadData, userData) {
             model = Modal.Codes;
             break;
         }
-        case 9:{
+        case 9: {
             model = Modal.Material;
             break;
         }
-        case 10:{
+        case 10: {
             model = Modal.StockEntry;
             break;
         }
-        case 11:{
+        case 11: {
             model = Modal.UOM
             break;
         }
-        case 12:{
+        case 12: {
             model = Modal.InvLocations
             break;
         }
@@ -651,23 +647,50 @@ async function addEditData(payloadData, userData) {
 
     if (!payloadData.id) {
         payloadData.createdBy = userData._id;
-        
+
         // Generate unique code for new material
         if (payloadData.modelType === 9) {
             payloadData.materialNo = await generateUniqueNo(9); // Pass type 9
         }
 
-        if(payloadData.modelType === 11){
-            payloadData.uomNo = await generateUniqueNo(11)       
+        if (payloadData.modelType === 11) {
+            payloadData.uomNo = await generateUniqueNo(11)
         }
 
-        if(payloadData.modelType === 12){
-            payloadData.locationNo = await generateUniqueNo(12)       
+        if (payloadData.modelType === 12) {
+            payloadData.locationNo = await generateUniqueNo(12)
         }
     }
 
-    if (payloadData.id) {
+    if (payloadData.id && !payloadData.transferLocation && !payloadData.transferQuantity) {
         return await Service.findAndUpdate(model, { _id: payloadData.id }, payloadData, { new: true });
+    }
+    else if (payloadData.id && payloadData.transferLocation && payloadData.transferQuantity && payloadData.locationId && payloadData.quantity) {
+        let criteria = {
+            lcodeId: { $in: payloadData.lcodeId },
+            locationId: payloadData.locationId,
+        };
+        const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
+        let remainingQuantity = StockData[0].quantity - Number(payloadData.transferQuantity);
+        const data = await Service.findAndUpdate(Modal.StockEntry, { _id: StockData[0]._id }, { quantity: remainingQuantity }, { new: true });
+        let transferCriteria = {
+            lcodeId: { $in: payloadData.lcodeId },
+            locationId: payloadData.transferLocation,
+        }
+        const transferStockData = await Service.getData(Modal.StockEntry, transferCriteria, {}, { lean: true });
+        if (!transferStockData[0]) {
+            const newStock = {
+                stockType:payloadData.stockType,
+                quantity:payloadData.transferQuantity,
+                lcodeId:payloadData.lcodeId,
+                locationId:payloadData.transferLocation,
+                createdBy:userData._id,
+            }
+            await Service.saveData(model, newStock)
+        } else {
+            let addedQuantity = transferStockData[0].quantity + Number(payloadData.transferQuantity);
+            await Service.findAndUpdate(Modal.StockEntry, { _id: transferStockData[0]._id }, { quantity: addedQuantity }, { new: true });
+        }
     }
     else {
         return await Service.saveData(model, payloadData);
@@ -679,42 +702,42 @@ async function addEditPrescription(payloadData, userData) {
     let model = Modal.Prescriptions, dataToSet = {};
     payloadData.lastUpdateBy = userData._id;
 
-    if(payloadData.id && payloadData.orderStatus){
+    if (payloadData.id && payloadData.orderStatus) {
         payloadData.commentAddedBy = userData._id;
     }
-    if(payloadData.orderStatus === 7 && payloadData.NALId && payloadData.lcodeQuantity && payloadData.lcodeId){
+    if (payloadData.orderStatus === 7 && payloadData.NALId && payloadData.lcodeQuantity && payloadData.lcodeId) {
 
         const lcodeQuantities = JSON.parse(payloadData.lcodeQuantity);
         const lcodeIds = JSON.parse(payloadData.lcodeId);
         let criteria = {
-            lcodeId: { $in:lcodeIds }, 
+            lcodeId: { $in: lcodeIds },
             locationId: payloadData.NALId,
-          };
-          
-          const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
-          
-          const stockDataMap = StockData.reduce((acc, item) => {
+        };
+
+        const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
+
+        const stockDataMap = StockData.reduce((acc, item) => {
             acc[item.lcodeId] = item;
             return acc;
-          }, {});
-          
-          const orderedStockData = lcodeIds.map(lcodeId => stockDataMap[lcodeId]);
-        
+        }, {});
+
+        const orderedStockData = lcodeIds.map(lcodeId => stockDataMap[lcodeId]);
+
         if (!orderedStockData || orderedStockData.length === 0 || lcodeQuantities.length !== StockData.length) {
             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
         }
-        
+
         const updates = [];
         for (let i = 0; i < orderedStockData.length; i++) {
             const stock = orderedStockData[i];
             const quantityToDeduct = Number(lcodeQuantities[i]);
-            console.log(stock.quantity, quantityToDeduct)        
+            // console.log(stock.quantity, quantityToDeduct)
             const remainingQuantity = stock.quantity - quantityToDeduct;
-        
+
             if (remainingQuantity < 0) {
                 throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
             }
-        
+
             // updates.push(
             //     Service.findAndUpdate(
             //         Modal.StockEntry,
@@ -728,13 +751,13 @@ async function addEditPrescription(payloadData, userData) {
         for (let i = 0; i < orderedStockData.length; i++) {
             const stock = orderedStockData[i];
             const quantityToDeduct = Number(lcodeQuantities[i]);
-            console.log(stock.quantity, quantityToDeduct)        
+            // console.log(stock.quantity, quantityToDeduct)
             const remainingQuantity = stock.quantity - quantityToDeduct;
-        
+
             // if (remainingQuantity < 0) {
             //     throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.LOW_LCODE_QUANTITY, payloadData.language);
             // }
-        
+
             updates.push(
                 Service.findAndUpdate(
                     Modal.StockEntry,
@@ -744,7 +767,7 @@ async function addEditPrescription(payloadData, userData) {
                 )
             );
         }
-        await Promise.all(updates);  
+        await Promise.all(updates);
     }
     if (payloadData.prescriptions) {
         payloadData.prescriptions = JSON.parse(payloadData.prescriptions)
@@ -770,10 +793,10 @@ async function addEditPrescription(payloadData, userData) {
         dataToSet.secondaryInsuranceNo = payloadData.secondaryInsuranceNo;
     }
 
-    if(payloadData.appointmentLocationId && payloadData.appointmentLocationId === 'undefined') {
+    if (payloadData.appointmentLocationId && payloadData.appointmentLocationId === 'undefined') {
         delete payloadData.appointmentLocationId
     }
-    if(payloadData.renderingPhysicianId && payloadData.renderingPhysicianId === 'undefined') {
+    if (payloadData.renderingPhysicianId && payloadData.renderingPhysicianId === 'undefined') {
         delete payloadData.renderingPhysicianId
     }
 
@@ -830,14 +853,14 @@ function covertXlsxToJson(payloadData) {
             if (err)
                 reject(err);
             else {
-                console.log(result.length,'result');
+                console.log(result.length, 'result');
                 resolve(result)
             };
         });
     });
 }
 
-async function importCodes(sheetData,userData) {
+async function importCodes(sheetData, userData) {
     try {
         const model = Modal.Codes;
         for (let data of sheetData) {
@@ -858,7 +881,7 @@ async function importCodes(sheetData,userData) {
     }
 }
 
-async function importInsurance(sheetData,userData) {
+async function importInsurance(sheetData, userData) {
     try {
         const model = Modal.InsuranceCompanies;
         for (let data of sheetData) {
@@ -888,15 +911,15 @@ async function importInsurance(sheetData,userData) {
 async function generatePdf(payloadData) {
     try {
         // payloadData.data = JSON.parse(payloadData.data);
-        const html = payloadData.type === 1 ?  generateMedical(payloadData.data) : generateDelivery(payloadData.data);
-        const fileName = `${payloadData.data.orderNo}_${payloadData.type === 1 ? 'medical':'delivery'}.pdf`;
+        const html = payloadData.type === 1 ? generateMedical(payloadData.data) : generateDelivery(payloadData.data);
+        const fileName = `${payloadData.data.orderNo}_${payloadData.type === 1 ? 'medical' : 'delivery'}.pdf`;
         console.log(html);
         const path = `${APP_CONSTANTS.SERVER.SERVER_STORAGE_NAME}pdfs/${fileName}`;
-        await html_to_pdf(html, {path});
+        await html_to_pdf(html, { path });
 
-        return {path : 'pdfs/'+fileName}
+        return { path: 'pdfs/' + fileName }
     }
-    catch (e) { 
+    catch (e) {
 
     }
 }

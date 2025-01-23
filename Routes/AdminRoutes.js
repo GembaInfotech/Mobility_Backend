@@ -692,6 +692,8 @@ module.exports = [
                     stockType: Joi.number(),
                     warehouseId: Joi.string(),
                     quantity:Joi.number(),
+                    transferLocation: Joi.string().allow(''),
+                    transferQuantity: Joi.string().allow(''),
                     targetWareHouse: Joi.string().allow(''),
                     availableQuantity: Joi.string().allow(''),
                 },

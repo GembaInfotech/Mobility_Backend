@@ -19,10 +19,10 @@ async function updateExcel(payload, userData) {
             throw new Error("No file uploaded");
         }
 
-        console.log("File received:", {
-            filename: file.hapi.filename,
-            headers: file.hapi.headers
-        });
+        // console.log("File received:", {
+        //     filename: file.hapi.filename,
+        //     headers: file.hapi.headers
+        // });
 
         const uploadsDirectory = path.join(__dirname, '../', APP_CONSTANTS.SERVER.SERVER_STORAGE_NAME + 'excelFiles');
         const tempFilePath = path.join(uploadsDirectory, file.hapi.filename);
@@ -47,7 +47,7 @@ async function updateExcel(payload, userData) {
                     const order = orderData[0];
 
                     if (order.orderStatus !== 9 || order.orderStatus !== 10 || order.orderStatus !== 11) {
-                        console.log("Order status is in process, updating NAD and NAL");
+                        // console.log("Order status is in process, updating NAD and NAL");
 
                         row['Next Appointment Date'] = moment(order.nextAppointmentDate).format('MM/DD/YYYY');
                         if (order.appointmentLocationId) {
@@ -58,13 +58,13 @@ async function updateExcel(payload, userData) {
                             row['Next Appointment Location'] = '';
                         }
                     } else {
-                        console.log("Order status is not in process, skipping NAD and NAL update");
+                        // console.log("Order status is not in process, skipping NAD and NAL update");
                     }
                 }
             }
         }
 
-        console.log("Updated worksheet", worksheet);
+        // console.log("Updated worksheet", worksheet);
         const updatedSheet = XLSX.utils.json_to_sheet(worksheet);
 
         // Calculate and adjust column widths (same as before)
@@ -125,12 +125,12 @@ async function exportData(payloadData) {
         }
 
         if (payloadData.nad) {
-            console.log("Hello from NAD");
+            // console.log("Hello from NAD");
             criteria.nextAppointmentDate = {
                 $gte: moment(payloadData.nad, 'MM/DD/YYYY').startOf('day').toDate(),
                 $lte: moment(payloadData.nad, 'MM/DD/YYYY').endOf('day').toDate(),
             };
-            console.log(criteria);
+            // console.log(criteria);
         }
 
         if (payloadData.patientId && payloadData.patientId !== '') {
@@ -195,7 +195,7 @@ async function exportData(payloadData) {
                 _id: payloadData.lcodeId
             };
             const lCodes = await Services.getData(Models.Codes, query, { _id: 1 }, { lean: true });
-            console.log("Lcodes", lCodes);
+            // console.log("Lcodes", lCodes);
 
             if (lCodes && lCodes.length > 0) {
                 criteria.prescriptions = {
