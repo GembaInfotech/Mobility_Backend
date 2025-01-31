@@ -433,7 +433,7 @@ async function listAdminData(payloadData, userData) {
 async function prescriptions(payloadData, userData) {
     try {
 
-        // console.log("prescription payload data", payloadData);
+        console.log("prescription payload data", payloadData);
 
         const criteria = {
             status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
@@ -446,6 +446,7 @@ async function prescriptions(payloadData, userData) {
         //     ];
         // }
 
+        
         if (payloadData.search && payloadData.search !== '') {
             criteria.$or = [
                 { orderNo: new RegExp(payloadData.search, 'i') }
@@ -490,6 +491,21 @@ async function prescriptions(payloadData, userData) {
             // console.log(criteria);
         }
 
+        if (payloadData.insuranceId && payloadData.insuranceId !== '') {
+            const patients = await Service.getData(
+                Modal.Patients,
+                { primaryInsurance: payloadData.insuranceId }, // Only check for secondaryInsurance
+                { _id: 1 },
+                { lean: true }
+            );
+        
+            if (patients.length > 0) {
+                criteria.patientId = { $in: patients.map((patient) => patient._id) };
+            } else {
+                return { data: [], count: 0 }; // No matching patients found
+            }
+        }
+             
         if (payloadData.patientId && payloadData.patientId !== '')
             criteria.patientId = payloadData.patientId
 
@@ -531,8 +547,6 @@ async function prescriptions(payloadData, userData) {
         }
 
 
-
-
         // if(payloadData.search) {
         //     const query = { 
         //         name: payloadData.search
@@ -556,10 +570,6 @@ async function prescriptions(payloadData, userData) {
         //         };
         //     }
         // }
-
-
-
-
 
         if ('status' in payloadData)
             criteria.orderStatus = payloadData.status
@@ -769,6 +779,7 @@ async function addEditPrescription(payloadData, userData) {
         }
         await Promise.all(updates);
     }
+    
     if (payloadData.prescriptions) {
         payloadData.prescriptions = JSON.parse(payloadData.prescriptions)
     };

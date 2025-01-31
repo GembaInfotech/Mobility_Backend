@@ -453,6 +453,7 @@ module.exports = [
                     nalId: Joi.string().allow(''),
                     physicianId: Joi.string().allow(''),
                     lcodeId: Joi.string().allow(''),
+                    insuranceId: Joi.string().allow(''),
                     patientDob : Joi.string().allow(''),
                     nad:Joi.string().allow(''),
                     prescriptionDate: Joi.string().allow(''),

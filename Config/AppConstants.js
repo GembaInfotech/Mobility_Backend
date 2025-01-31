@@ -58,7 +58,8 @@ const DATABASE = {
         DENIED: 11,
         DROPSHIP_IN_PROCESS: 12,
         INSURANCE_IN_PROCESS: 13,
-        HIGH_DEDUCTIBLE: 14
+        HIGH_DEDUCTIBLE: 14,
+        DELIVERY_SCHEDULED: 15,
     },
     MEDIA_UPLOAD_TYPE : {
         ORDERS : 1,
