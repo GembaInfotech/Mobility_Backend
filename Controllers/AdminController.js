@@ -651,8 +651,21 @@ async function addEditData(payloadData, userData) {
             model = Modal.InvLocations
             break;
         }
+        case 13: {
+            model = Modal.Company
+            break;
+        }
     }
-
+    if(!payloadData.id && payloadData.lcodeId && payloadData.stockType && payloadData.quantity && payloadData.locationId){
+        let criteria = {
+            lcodeId: { $in: payloadData.lcodeId },
+            locationId: payloadData.locationId,
+        };
+        const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
+        if(StockData){
+            throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.STOCK_STATION_ALREADY_EXISTS, payloadData.language);
+        }
+    }
     payloadData.lastUpdateBy = userData._id;
 
     if (!payloadData.id) {
@@ -670,7 +683,11 @@ async function addEditData(payloadData, userData) {
         if (payloadData.modelType === 12) {
             payloadData.locationNo = await generateUniqueNo(12)
         }
-    }
+
+        if (payloadData.modelType === 13) {
+            payloadData.companyNo = await generateUniqueNo(13)
+        }
+    } 
 
     if (payloadData.id && !payloadData.transferLocation && !payloadData.transferQuantity) {
         return await Service.findAndUpdate(model, { _id: payloadData.id }, payloadData, { new: true });
@@ -725,13 +742,16 @@ async function addEditPrescription(payloadData, userData) {
         };
 
         const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
-
+        console.log("stockData check 1", StockData)
         const stockDataMap = StockData.reduce((acc, item) => {
             acc[item.lcodeId] = item;
             return acc;
         }, {});
 
+        console.log("stockDataMap", stockDataMap)
         const orderedStockData = lcodeIds.map(lcodeId => stockDataMap[lcodeId]);
+
+        console.log("orderedStockData checlk 1", orderedStockData);
 
         if (!orderedStockData || orderedStockData.length === 0 || lcodeQuantities.length !== StockData.length) {
             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.NO_STOCK_STATION, payloadData.language);
@@ -803,7 +823,6 @@ async function addEditPrescription(payloadData, userData) {
     if ("secondaryInsuranceNo" in payloadData) {
         dataToSet.secondaryInsuranceNo = payloadData.secondaryInsuranceNo;
     }
-
     if (payloadData.appointmentLocationId && payloadData.appointmentLocationId === 'undefined') {
         delete payloadData.appointmentLocationId
     }

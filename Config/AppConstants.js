@@ -342,6 +342,15 @@ const STATUS_MSG = {
                 [DATABASE.APP_LANGUAGE.Arabic]  : 'No stock station is available for this location or LCode.',
             },
             type: 'NO_STOCK_STATION'
+        },
+
+        STOCK_STATION_ALREADY_EXISTS: {
+            statusCode: 400,
+            customMessage: {
+                [DATABASE.APP_LANGUAGE.English]  : 'A stock station already exists for this location or LCode.',
+                [DATABASE.APP_LANGUAGE.Arabic]  : 'A stock station already exists for this location or LCode.',
+            },
+            type: 'STOCK_STATION_ALREADY_EXISTS'
         }
 
     },

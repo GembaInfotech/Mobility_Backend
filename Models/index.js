@@ -1,6 +1,5 @@
 const Inventory = require('./Inventory');
 
-
 module.exports = {
 
     Admins: require('./Admins'),
@@ -16,5 +15,6 @@ module.exports = {
     StockEntry:require('./StockEntry'),
     UOM:require('./UnitOfMeasurement'),
     InvLocations: require('./InventoryLocation'),
+    Company:require('./Company')
 
 };

@@ -233,6 +233,8 @@ function findListingModel(type) {
         case 12:
             model = Modal.InvLocations;
             break;
+        case 13:
+            model = Modal.Company
             
         default:
             break;
@@ -267,14 +269,18 @@ async function generateUniqueNo(type) {
         model = Modal.InvLocations
         prefix = 'L'
     }
+    if(type===13){
+        model = Modal.Company
+        prefix = 'COM'
+    }
 
-    let check = await Service.findOne(model, {}, { patientNo: 1, orderNo: 1, materialNo: 1, uomNo: 1, locationNo: 1 }, { sort: { _id: -1 } });
+    let check = await Service.findOne(model, {}, { patientNo: 1, orderNo: 1, materialNo: 1, uomNo: 1, locationNo: 1, companyNo: 1 }, { sort: { _id: -1 } });
 
     let newNumber;
     if (!check) {
         newNumber = startingId; 
     } else {
-        const alreadyId = check.patientNo || check.orderNo || check.materialNo || check.locationNo || check.uomNo;
+        const alreadyId = check.patientNo || check.orderNo || check.materialNo || check.locationNo || check.uomNo || check.companyNo;
         let previousNumber = Number(alreadyId.match(/\d+/)); 
         newNumber = previousNumber + 1;
     }
