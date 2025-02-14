@@ -170,12 +170,16 @@ async function listData(payloadData, userData) {
             criteria._id = { $ne: userData._id }
         }
 
+        if(payloadData.type===13 && payloadData.companyId){
+            criteria._id = payloadData.companyId
+        }
+
         const [data, count] = await Promise.all([
             Service.populateData(findListingModel(payloadData.type), criteria, {}, options, populate),
             Service.count(findListingModel(payloadData.type), criteria)
         ])
 
-        // console.log("data", data);
+        console.log("data", data);
 
         return { data: payloadData.id ? data[0] : data, count };
     }
@@ -188,7 +192,7 @@ async function addEditSubAdmin(payloadData, userData) {
     try {
         let model = Modal.Admins;
 
-        // console.log("payloadData", payloadData);
+        console.log("payloadData", payloadData);
 
 
         if (payloadData.phoneNumber) {
@@ -216,6 +220,9 @@ async function addEditSubAdmin(payloadData, userData) {
 
         if (payloadData.roles) {
             payloadData.roles = JSON.parse(payloadData.roles)
+        }
+        if(payloadData.companyId){
+            payloadData.companyId = payloadData.companyId
         }
 
         if (payloadData.adminId) {
@@ -658,11 +665,14 @@ async function addEditData(payloadData, userData) {
     }
     if(!payloadData.id && payloadData.lcodeId && payloadData.stockType && payloadData.quantity && payloadData.locationId){
         let criteria = {
-            lcodeId: { $in: payloadData.lcodeId },
-            locationId: payloadData.locationId,
-        };
+            $and: [
+                { lcodeId: { $in: payloadData.lcodeId } },
+                { locationId: payloadData.locationId }
+            ]
+        };        
         const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
-        if(StockData){
+        console.log("sdasadsf StockData", StockData);
+        if(StockData && StockData.length > 0){
             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.STOCK_STATION_ALREADY_EXISTS, payloadData.language);
         }
     }

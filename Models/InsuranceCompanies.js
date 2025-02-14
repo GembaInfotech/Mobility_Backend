@@ -7,6 +7,7 @@ const InsuranceCompanies = new Schema({
 
     name : {type: String, trim: true, index: true},
     email: {type: String, trim: true},
+    companyId : {type: Schema.Types.ObjectId, ref: 'Company', index: true},
     password: {type: String},
     countryCode: {type: String,default : "+1"},
     phoneNumber: {type: String,index : true},

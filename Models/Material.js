@@ -4,6 +4,7 @@ const { APP_CONSTANTS } = require('../Config');
 
 const Material = new Schema({
     material: { type: String, required: true },
+    companyId : {type: Schema.Types.ObjectId, ref: 'Company', index: true},
     materialNo:{type: String, trim: true, index: true},
     type: { type: String, required: true },
     group: { type: String, required: true },

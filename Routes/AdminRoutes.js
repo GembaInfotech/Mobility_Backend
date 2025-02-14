@@ -251,6 +251,7 @@ module.exports = [
                     userCode: Joi.string(),
                     roles: Joi.string(),
                     name: Joi.string(),
+                    companyId:Joi.string().allow(''),
                     email: Joi.string().lowercase(),
                     countryCode: Joi.string(),
                     phoneNumber: Joi.string(),
@@ -289,6 +290,7 @@ module.exports = [
             validate: {
                 payload: {
                     id: Joi.string().trim().description('for edit only'),
+                    companyId: Joi.string(),
                     name: Joi.string(),
                     email: Joi.string().lowercase(),
                     countryCode: Joi.string(),
@@ -370,6 +372,7 @@ module.exports = [
                 query: {
                     type : Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material,11- uom 12- invLocations'),
                     id: Joi.string().trim().description('for single data only'),
+                    companyId:Joi.string().allow(''),
                     search: Joi.string().allow(''),
                     mobile: Joi.string().allow(''),
                     locationId : Joi.string().allow(''),
@@ -501,6 +504,7 @@ module.exports = [
                 payload: {
                     id: Joi.string().trim().description('for edit only'),
                     patientId: Joi.string(),
+                    companyId: Joi.string(),
                     physicianId: Joi.string(),
                     renderingPhysicianId: Joi.string(),
                     locationId: Joi.string(),
@@ -591,6 +595,7 @@ module.exports = [
                 payload: {
                     id: Joi.string().trim().description('for edit only'),
                     firstName: Joi.string(),
+                    companyId:Joi.string(),
                     lastName: Joi.string(),
                     email: Joi.string().lowercase(),
                     countryCode: Joi.string().default('+1'),
@@ -635,6 +640,7 @@ module.exports = [
             validate: {
                 payload: {
                     id: Joi.string().trim().description('for edit only'),
+                    companyId:Joi.string(),
                     name: Joi.string(),
                     email: Joi.string().lowercase(),
                     countryCode: Joi.string().default('+1'),
@@ -679,6 +685,7 @@ module.exports = [
                     modelType: Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material, 10- stockEntry'),
                     id: Joi.string().trim().description('for edit only'),
                     group:Joi.string(),
+                    companyId:Joi.string(),
                     material:Joi.string(),
                     type: Joi.string(),
                     uomId:  Joi.string(),

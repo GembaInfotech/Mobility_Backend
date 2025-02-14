@@ -26,7 +26,7 @@ async function cryptData(stringToCrypt) {
         });
     })
 }
-
+ 
 async function comparePassword(data,hash) {
     return new Promise((resolve,reject) => {
         bcrypt.compare(data, hash, function(err, res) {

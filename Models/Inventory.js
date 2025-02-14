@@ -5,6 +5,8 @@ const {APP_CONSTANTS} = require('../Config');
 const Inventory = new Schema({
     name: { type: String, required: true },
     address: { type: String, required: true },
+    companyId : {type: Schema.Types.ObjectId, ref: 'Company', index: true},
+
     storeManager: { type: String, required: true },
     status :{type: Number, default : APP_CONSTANTS.DATABASE.STATUS.ACTIVE},
     lastUpdateBy : {type: Schema.Types.ObjectId, ref: 'Admins'},

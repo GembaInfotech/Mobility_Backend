@@ -4,6 +4,7 @@ const {APP_CONSTANTS} = require('../Config');
 
 const UOM = new Schema({
     uomNo : {type: String, trim: true, index: true},
+    companyId : {type: Schema.Types.ObjectId, ref: 'Company', index: true},
     name: { type: String, required: true },
     status :{type: Number, default : APP_CONSTANTS.DATABASE.STATUS.ACTIVE},
     lastUpdateBy : {type: Schema.Types.ObjectId, ref: 'Admins'},

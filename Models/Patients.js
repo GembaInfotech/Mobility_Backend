@@ -6,6 +6,7 @@ const {DATABASE} = require('../Config/AppConstants');
 const Patients = new Schema({
 
     patientNo : {type: String, trim: true, index: true},
+    companyId : {type: Schema.Types.ObjectId, ref: 'Company', index: true},
     firstName : {type: String, trim: true, index: true},
     lastName : {type: String, trim: true, index: true},
     email: {type: String, trim: true, index: true},

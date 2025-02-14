@@ -6,6 +6,7 @@ const {APP_CONSTANTS} = require('../Config');
 const InvLocations = new Schema({
 
     name :{type: String},
+    companyId : {type: Schema.Types.ObjectId, ref: 'Company', index: true},
     locationNo:  {type: String, trim: true, index: true},
     status :{type: Number, default : APP_CONSTANTS.DATABASE.STATUS.ACTIVE},
     lastUpdateBy : {type: Schema.Types.ObjectId, ref: 'Admins'},

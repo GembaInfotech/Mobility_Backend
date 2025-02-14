@@ -11,6 +11,7 @@ const Prescriptions = new Schema({
     renderingPhysicianId : {type: Schema.Types.ObjectId, ref: 'Physicians', index : true},
     locationId : {type: Schema.Types.ObjectId, ref: 'Locations', sparse : true},
     appointmentLocationId : {type: Schema.Types.ObjectId, ref: 'Locations', sparse : true},
+    companyId: {type: Schema.Types.ObjectId, ref: 'Company', sparse : true},
     nextAppointmentDate :{type: Date},
     physicianNotes :{type: Boolean, default: false},
     insuranceType :{type: Number, default : APP_CONSTANTS.DATABASE.INSURANCE_TYPE.SELF_PAY},

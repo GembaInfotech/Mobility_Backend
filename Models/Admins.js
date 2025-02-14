@@ -7,6 +7,9 @@ const Admins = new Schema({
 
     name : {type: String, trim: true, index: true},
     email: {type: String, trim: true, index: true},
+    
+    companyId: { type: Schema.Types.ObjectId, ref: 'Company'},
+
     password: {type: String, index : true},
     countryCode: {type: String,default : "+91"},
     phoneNumber: {type: String,index : true},
