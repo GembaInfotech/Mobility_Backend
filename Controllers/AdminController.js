@@ -658,11 +658,14 @@ async function addEditData(payloadData, userData) {
     }
     if(!payloadData.id && payloadData.lcodeId && payloadData.stockType && payloadData.quantity && payloadData.locationId){
         let criteria = {
-            lcodeId: { $in: payloadData.lcodeId },
-            locationId: payloadData.locationId,
-        };
+            $and: [
+                { lcodeId: { $in: payloadData.lcodeId } },
+                { locationId: payloadData.locationId }
+            ]
+        };        
         const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
-        if(StockData){
+        console.log("sdasadsf StockData", StockData);
+        if(StockData && StockData.length > 0){
             throw generateResponseMessage(APP_CONSTANTS.STATUS_MSG.ERROR.STOCK_STATION_ALREADY_EXISTS, payloadData.language);
         }
     }
@@ -723,7 +726,6 @@ async function addEditData(payloadData, userData) {
         return await Service.saveData(model, payloadData);
     }
 }
-
 async function addEditPrescription(payloadData, userData) {
 
     let model = Modal.Prescriptions, dataToSet = {};
