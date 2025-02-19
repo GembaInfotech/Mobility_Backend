@@ -95,7 +95,10 @@ async function blockDeleteData(payloadData, userData) {
 async function listData(payloadData, userData) {
     try {
 
-        const criteria = { status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED } };
+        const criteria = { 
+            status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
+            companyId: payloadData.companyId
+        };
 
         if (payloadData.search && payloadData.search !== '') {
             criteria.$or = [
@@ -179,7 +182,7 @@ async function listData(payloadData, userData) {
             Service.count(findListingModel(payloadData.type), criteria)
         ])
 
-        console.log("data", data);
+        // console.log("data", data);
 
         return { data: payloadData.id ? data[0] : data, count };
     }
@@ -444,6 +447,7 @@ async function prescriptions(payloadData, userData) {
 
         const criteria = {
             status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
+            companyId:payloadData.companyId
         };
 
         let modelName = Modal.Prescriptions;
@@ -854,7 +858,10 @@ async function addEditPrescription(payloadData, userData) {
 
 async function dashboardData(payloadData, userData) {
 
-    const criteria = { status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED } };
+    const criteria = { 
+        status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
+        companyId:payloadData.companyId
+    };
 
     const [totalPatient, totalPhysician] = await Promise.all([
         Service.count(Modal.Patients, { ...criteria }),
