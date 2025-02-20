@@ -372,6 +372,7 @@ module.exports = [
                     type : Joi.number().required().description('1- deviceType, 2- Location, 3- LCD/ICD code, 9- material,11- uom 12- invLocations'),
                     id: Joi.string().trim().description('for single data only'),
                     companyId:Joi.string(),
+                    companyIds:Joi.string(),
                     search: Joi.string().allow(''),
                     mobile: Joi.string().allow(''),
                     locationId : Joi.string().allow(''),

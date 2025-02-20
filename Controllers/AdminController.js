@@ -94,11 +94,27 @@ async function blockDeleteData(payloadData, userData) {
 
 async function listData(payloadData, userData) {
     try {
+        let criteria = {};
+        if(payloadData.type==7){
+            criteria = { 
+                status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
+            };
+        }
+        else if(payloadData.companyIds){
+            const companyIds = JSON.parse(payloadData.companyIds);
+            criteria = { 
+                status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
+                _id: { $in: companyIds } // Use $in to match any ID in the array
+            };
+        }
+        else{
+            criteria = { 
+                status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
+                companyId: payloadData.companyId
+            };
+        }
 
-        const criteria = { 
-            status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
-            companyId: payloadData.companyId
-        };
+        
 
         if (payloadData.search && payloadData.search !== '') {
             criteria.$or = [
@@ -176,13 +192,13 @@ async function listData(payloadData, userData) {
         if(payloadData.type===13 && payloadData.companyId){
             criteria._id = payloadData.companyId
         }
-
+        console.log("sncvsjdcdsvc", criteria, payloadData.type)
         const [data, count] = await Promise.all([
             Service.populateData(findListingModel(payloadData.type), criteria, {}, options, populate),
             Service.count(findListingModel(payloadData.type), criteria)
         ])
 
-        // console.log("data", data);
+        console.log("data", data);
 
         return { data: payloadData.id ? data[0] : data, count };
     }
