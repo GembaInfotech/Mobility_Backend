@@ -142,6 +142,7 @@ module.exports = [
                     startDate : Joi.string().description('MM/DD/YYYY'),
                     endDate : Joi.string().description('MM/DD/YYYY'),
                     userId : Joi.string(),
+                    companyId:Joi.string(),
                     skip : Joi.number(),
                     limit : Joi.number(),
                     status  : Joi.number(),

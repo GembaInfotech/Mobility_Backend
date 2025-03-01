@@ -117,7 +117,8 @@ async function updateExcel(payload, userData) {
 async function exportData(payloadData) {
     try {
         let model, criteria = {
-            status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED }
+            status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
+            companyId: payloadData.companyId
         }, populate = [], fileName = '', columns = [];
 
         if (payloadData.id) {
