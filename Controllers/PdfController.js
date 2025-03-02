@@ -5,9 +5,9 @@ const dateFormat = 'MM-DD-YYYY'
 
 function generateMedical(data) {   
     let icdItems = '', lcodeItems =''
-    const title = data.companyId === "67a1984810cc713bf308c626"
+    const title = data.companyId === "67c3ec77851f03d96270ca85"
         ? "North American Spine & Pain Clinic" 
-        : data.companyId === "67bbf74a4381684ac8e9a836" 
+        : data.companyId === "67c3fb8308a4d79e36ebf939" 
         ? "PPS" 
         : "Medical Report";
     
