@@ -561,7 +561,7 @@ module.exports = [
             validate: {
                 payload: {
                     type: Joi.number().description('1- medical neccesity,2- delivery receipt'),
-                    data : Joi.any()
+                    data : Joi.any(),
                 },
                 // headers: UniversalFunctions.authorizationHeaderObj,
                 failAction: UniversalFunctions.failActionFunction

@@ -4,8 +4,12 @@ const logoUrl = "https://api.bracetekk.com/bucket/logoImg.jpeg";
 const dateFormat = 'MM-DD-YYYY'
 
 function generateMedical(data) {   
-    
     let icdItems = '', lcodeItems =''
+    const title = data.companyId === "67a1984810cc713bf308c626"
+        ? "North American Spine & Pain Clinic" 
+        : data.companyId === "67bbf74a4381684ac8e9a836" 
+        ? "PPS" 
+        : "Medical Report";
     
     data.icd.map((item) => {
         icdItems+= `
@@ -31,7 +35,7 @@ return `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>North American Spine & Pain Clinic</title>
+    <title>${title}</title>
    <style>
     body {
         /* display: flex; */
@@ -119,7 +123,7 @@ return `<!DOCTYPE html>
 </head>
 <body>
     <div class="header-container">
-        <header>North American Spine & Pain Clinic</header>
+        <header>${title}</header>
         <img src=${logoUrl} alt="Clinic Logo" class="logo">
     </div>
 
