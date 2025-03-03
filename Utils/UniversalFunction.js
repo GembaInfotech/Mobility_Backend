@@ -291,6 +291,7 @@ async function generateUniqueNo(type) {
 }
 
 async function uploadFileStorage(image, folder) {
+    console.log("image", image, "folder", folder);
 
     if (Array.isArray(image)) {
         return new Promise((resolve, reject) => {
