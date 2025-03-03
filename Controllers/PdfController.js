@@ -1,10 +1,20 @@
 const moment = require('moment');
 
-const logoUrl = "https://api.bracetekk.com/bucket/others/PPS_1544368236630.PNG";
+// const logoUrl = "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png";
+// const logoUrl = "https://api.bracetekk.com/bucket/others/NASP1_1730076773708.png";
+
+
+
 const dateFormat = 'MM-DD-YYYY'
 
 function generateMedical(data) {
     let icdItems = '', lcodeItems = ''
+
+    const logoUrl = data.companyId === "67c3ec77851f03d96270ca85"
+? "https://api.bracetekk.com/bucket/others/NASP1_1730076773708.png"
+: data.companyId === "67c3fb8308a4d79e36ebf939"
+    ? "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png"
+    : "Medical Report";
     const title = data.companyId === "67c3ec77851f03d96270ca85"
         ? "North American Spine & Pain Clinic"
         : data.companyId === "67c3fb8308a4d79e36ebf939"
@@ -217,6 +227,11 @@ function generateDelivery(data) {
   */
 
     let lcodeItems = '';
+    const logoUrl = data.companyId === "67c3ec77851f03d96270ca85"
+? "https://api.bracetekk.com/bucket/others/NASP1_1730076773708.png"
+: data.companyId === "67c3fb8308a4d79e36ebf939"
+    ? "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png"
+    : "Medical Report";
     const title = data.companyId === "67c3ec77851f03d96270ca85"
         ? "North American Spine & Pain Clinic"
         : data.companyId === "67c3fb8308a4d79e36ebf939"
