@@ -30,7 +30,7 @@ module.exports.html_to_pdf = async (templateHtml, options) => {
                 args: ["--no-sandbox"],
                 headless: true,
             };
-            if(process.env.NODE_ENV !== 'dev') pupeteerOptions.executablePath = '/usr/bin/chromium-browser';
+            if(process.env.NODE_ENV !== 'local') pupeteerOptions.executablePath = '/usr/bin/chromium-browser';
     
             const browser = await puppeteer.launch(pupeteerOptions);
             const page = await browser.newPage();
