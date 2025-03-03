@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const logoUrl = "https://api.bracetekk.com/bucket/logoImg.jpeg";
+const logoUrl = "https://api.bracetekk.com/bucket/others/PPS_1544368236630.PNG";
 const dateFormat = 'MM-DD-YYYY'
 
 function generateMedical(data) {
