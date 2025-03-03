@@ -3,16 +3,16 @@ const moment = require('moment');
 const logoUrl = "https://api.bracetekk.com/bucket/logoImg.jpeg";
 const dateFormat = 'MM-DD-YYYY'
 
-function generateMedical(data) {   
-    let icdItems = '', lcodeItems =''
+function generateMedical(data) {
+    let icdItems = '', lcodeItems = ''
     const title = data.companyId === "67c3ec77851f03d96270ca85"
-        ? "North American Spine & Pain Clinic" 
-        : data.companyId === "67c3fb8308a4d79e36ebf939" 
-        ? "PPS" 
-        : "Medical Report";
-    
+        ? "North American Spine & Pain Clinic"
+        : data.companyId === "67c3fb8308a4d79e36ebf939"
+            ? "PPS"
+            : "Medical Report";
+
     data.icd.map((item) => {
-        icdItems+= `
+        icdItems += `
          <tr>
         <td>${item?.code}</td>
         <td colspan="5">${item?.description}</td>
@@ -21,7 +21,7 @@ function generateMedical(data) {
     })
 
     data.lCode.map((item) => {
-        lcodeItems+= `
+        lcodeItems += `
          <tr>
             <td>${item?.code}</td>
             <td>${item?.quantity}</td>
@@ -30,7 +30,7 @@ function generateMedical(data) {
         `
     })
 
-return `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -196,27 +196,35 @@ return `<!DOCTYPE html>
         <p class="p">The above procedures and any repair and/or parts to maintain proper fit and function are appropriate for this patient and are deemed medically necessary</p>
         <h5>Medical Necessity:</h5>
         <p>${data?.notes}</p>
+        
         <footer class="grid-container">
-            <div>
-                <p>${data?.prescriberName}</p>
-            </div>
-            <div>
-                <p>${moment().format(dateFormat)}</p>
-            </div>
-        </footer>
+                <div class="sig">
+                    <p>PRESCRIBER SIGNATURE:</p>
+                </div>
+                <div class="date">
+                    <p>DATE:</p>
+                </div>
+            </footer>
     </div>
 </body>
 </html>`
 
 }
 
-function generateDelivery(data) {   
-      /*<p class="patient">Patient: SANDOVAL, Cesar DOB: Sep 16, 1980</p> 
-    <p class="top-h">IMPORTANT: EMAIL PATIENT SIGNED RECEIPT TO <U>DME@NASPACMD.COM</U></p>
-    */
+function generateDelivery(data) {
+    /*<p class="patient">Patient: SANDOVAL, Cesar DOB: Sep 16, 1980</p> 
+  <p class="top-h">IMPORTANT: EMAIL PATIENT SIGNED RECEIPT TO <U>DME@NASPACMD.COM</U></p>
+  */
+
     let lcodeItems = '';
+    const title = data.companyId === "67c3ec77851f03d96270ca85"
+        ? "North American Spine & Pain Clinic"
+        : data.companyId === "67c3fb8308a4d79e36ebf939"
+            ? "PPS"
+            : "Medical Report";
+
     data?.lCode?.map((item) => {
-        lcodeItems+= `<tr>
+        lcodeItems += `<tr>
                 <td>${item?.code}</td>
                 <td>${item?.quantity}</td>
                 <td colspan="2">${item?.description}</td>
@@ -230,7 +238,7 @@ function generateDelivery(data) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>North American Spine & Pain Clinic</title>
+        <title>${title}</title>
         <style>
             body {
                 /* display: flex; */
@@ -346,7 +354,7 @@ function generateDelivery(data) {
     </head>
     <body>
         <div class="logo">
-        <header >North American Spine & Pain Clinic</header>
+        <header >${title}</header>
         <img src=${logoUrl} alt="logo">
         </div>
         <h3 class="top-border">DME Delivery Receipt</h3>
@@ -417,7 +425,7 @@ function generateDelivery(data) {
                     <p>PATIENT SIGNATURE</p>
                 </div>
                 <div class="date">
-                    <p>${moment().format(dateFormat)}</p>
+                    <p>DATE</p>
                 </div>
             </footer>
         </div>
