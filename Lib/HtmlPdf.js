@@ -22,9 +22,6 @@ handlebars.registerHelper("currentyear", function(datetime, format) {
 
 module.exports.html_to_pdf = async (templateHtml, options) => {
     try {
-            // Create directories recursively if they don't exist
-
-            console.log("check pdf generationgjhgklkhjk")
             const directoryPath = options.path.substring(0, options.path.lastIndexOf('/'));
             console.log("options", options , directoryPath)
 
@@ -34,15 +31,12 @@ module.exports.html_to_pdf = async (templateHtml, options) => {
                 args: ["--no-sandbox"],
                 headless: true,
             };
-            if(process.env.NODE_ENV !== 'dev') pupeteerOptions.executablePath = '/usr/bin/chromium-browser';
+            // if(process.env.NODE_ENV !== 'dev') pupeteerOptions.executablePath = '/usr/bin/chromium-browser';
     
             const browser = await puppeteer.launch(pupeteerOptions);
-            console.log("browser", browser)
             const page = await browser.newPage();
-            console.log("page", page)
 
             templateHtml = encodeURIComponent(templateHtml);
-            console.log("templateHtml", templateHtml)
 
     
             await page.goto(`data:text/html;charset=UTF-8,${templateHtml}`, {
