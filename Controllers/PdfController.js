@@ -14,7 +14,7 @@ function generateMedical(data) {
 ? "https://api.bracetekk.com/bucket/others/NASP1_1730076773708.png"
 : data.companyId === "67c3fb8308a4d79e36ebf939"
     ? "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png"
-    : "Medical Report";
+    : "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png";
     const title = data.companyId === "67c3ec77851f03d96270ca85"
         ? "North American Spine & Pain Clinic"
         : data.companyId === "67c3fb8308a4d79e36ebf939"
@@ -232,6 +232,7 @@ function generateDelivery(data) {
 : data.companyId === "67c3fb8308a4d79e36ebf939"
     ? "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png"
     : "Medical Report";
+
     const title = data.companyId === "67c3ec77851f03d96270ca85"
         ? "North American Spine & Pain Clinic"
         : data.companyId === "67c3fb8308a4d79e36ebf939"
