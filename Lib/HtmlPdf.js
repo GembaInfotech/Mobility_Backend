@@ -23,6 +23,8 @@ handlebars.registerHelper("currentyear", function(datetime, format) {
 module.exports.html_to_pdf = async (templateHtml, options) => {
     try {
             // Create directories recursively if they don't exist
+
+            console.log("check pdf generationgjhgklkhjk")
             const directoryPath = options.path.substring(0, options.path.lastIndexOf('/'));
             await mkdirAsync(directoryPath, { recursive: true });
 
