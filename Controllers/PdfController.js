@@ -11,10 +11,10 @@ function generateMedical(data) {
     let icdItems = '', lcodeItems = ''
 
     const logoUrl = data.companyId === "67c3ec77851f03d96270ca85"
-? "https://api.bracetekk.com/bucket/others/NASP1_1730076773708.png"
+? "https://api.bracetekk.com/bucket/logoImg.jpeg"
 : data.companyId === "67c3fb8308a4d79e36ebf939"
-    ? "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png"
-    : "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png";
+    ? "https://api.bracetekk.com/bucket/others/PPS1_1462763116672.png"
+    : "https://api.bracetekk.com/bucket/others/PPS1_1462763116672.png";
     const title = data.companyId === "67c3ec77851f03d96270ca85"
         ? "North American Spine & Pain Clinic"
         : data.companyId === "67c3fb8308a4d79e36ebf939"
@@ -228,10 +228,10 @@ function generateDelivery(data) {
 
     let lcodeItems = '';
     const logoUrl = data.companyId === "67c3ec77851f03d96270ca85"
-? "https://api.bracetekk.com/bucket/others/NASP1_1730076773708.png"
+? "https://api.bracetekk.com/bucket/logoImg.jpeg"
 : data.companyId === "67c3fb8308a4d79e36ebf939"
-    ? "https://api.bracetekk.com/bucket/others/PPS1_1526398365881.png"
-    : "Medical Report";
+    ? "https://api.bracetekk.com/bucket/others/PPS1_1462763116672.png"
+    : "https://api.bracetekk.com/bucket/others/PPS1_1462763116672.png";
 
     const title = data.companyId === "67c3ec77851f03d96270ca85"
         ? "North American Spine & Pain Clinic"
