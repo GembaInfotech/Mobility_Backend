@@ -26,6 +26,8 @@ module.exports.html_to_pdf = async (templateHtml, options) => {
 
             console.log("check pdf generationgjhgklkhjk")
             const directoryPath = options.path.substring(0, options.path.lastIndexOf('/'));
+            console.log("options", options , directoryPath)
+
             await mkdirAsync(directoryPath, { recursive: true });
 
             let pupeteerOptions = {
