@@ -37,8 +37,13 @@ module.exports.html_to_pdf = async (templateHtml, options) => {
             if(process.env.NODE_ENV !== 'dev') pupeteerOptions.executablePath = '/usr/bin/chromium-browser';
     
             const browser = await puppeteer.launch(pupeteerOptions);
+            console.log("browser", browser)
             const page = await browser.newPage();
+            console.log("page", page)
+
             templateHtml = encodeURIComponent(templateHtml);
+            console.log("templateHtml", templateHtml)
+
     
             await page.goto(`data:text/html;charset=UTF-8,${templateHtml}`, {
                 waitUntil: "networkidle0",
