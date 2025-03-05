@@ -198,7 +198,7 @@ async function listData(payloadData, userData) {
             Service.count(findListingModel(payloadData.type), criteria)
         ])
 
-        console.log("data", data);
+        // console.log("data", data);
 
         return { data: payloadData.id ? data[0] : data, count };
     }
