@@ -138,6 +138,21 @@ async function exportData(payloadData) {
             criteria.patientId = payloadData.patientId;
         }
 
+        if (payloadData.insuranceId && payloadData.insuranceId !== '') {
+            const patients = await Services.getData(
+                Models.Patients,
+                { primaryInsurance: payloadData.insuranceId }, // Only check for secondaryInsurance
+                { _id: 1 },
+                { lean: true }
+            );
+
+            if (patients.length > 0) {
+                criteria.patientId = { $in: patients.map((patient) => patient._id) };
+            } else {
+                return { data: [], count: 0 }; // No matching patients found
+            }
+        }
+
         if (payloadData.patientDob) {
             const query = {
                 dob: {
