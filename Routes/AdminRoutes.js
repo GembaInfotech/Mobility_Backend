@@ -148,6 +148,7 @@ module.exports = [
                     status  : Joi.number(),
                     search : Joi.string().allow(''),
                     nalId: Joi.string().allow(''),
+                    insuranceId:Joi.string().allow(''),
                     physicianId: Joi.string().allow(''),
                     lcodeId: Joi.string().allow(''),
                     patientId : Joi.string().allow(''),
