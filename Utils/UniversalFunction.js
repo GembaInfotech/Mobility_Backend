@@ -243,45 +243,64 @@ function findListingModel(type) {
     return model
 }
 
-async function generateUniqueNo(type) {
+async function generateUniqueNo(type, companyId) {
     let model;
     let prefix;
-    let startingId = 100001; 
-    let numberLength = 6; 
+    let startingId = 100001;
+    let numberLength = 6;
+
+    let company = await Service.findOne(Modal.Company, { _id: companyId }, { name: 1 });
+    if (!company) {
+        throw new Error("Company not found");
+    }
+
+    let companyPrefix = company.name.substring(0, 3).toUpperCase();
+    let useFixedPrefix = companyId === "67c3ec77851f03d96270ca85";
 
     if (type === 1) {
         model = Modal.Patients;
-        prefix = 'P'; 
-    }
-    if (type === 2) {
+        prefix = useFixedPrefix ? 'P' : `${companyPrefix}-P`;
+    } else if (type === 2) {
         model = Modal.Prescriptions;
-        prefix = 'S'; 
-    }
-    if (type === 9) {
+        prefix = useFixedPrefix ? 'S' : `${companyPrefix}-S`;
+    } else if (type === 9) {
         model = Modal.Material;
-        prefix = 'M'; 
-    }
-    if(type === 11){
-        model = Modal.UOM
-        prefix = 'UOM'
-    }
-    if(type === 12){
-        model = Modal.InvLocations
-        prefix = 'L'
-    }
-    if(type===13){
-        model = Modal.Company
-        prefix = 'COM'
+        prefix = useFixedPrefix ? 'M' : `${companyPrefix}-M`;
+    } else if (type === 11) {
+        model = Modal.UOM;
+        prefix = useFixedPrefix ? 'UOM' : `${companyPrefix}-UOM`;
+    } else if (type === 12) {
+        model = Modal.InvLocations;
+        prefix = useFixedPrefix ? 'L' : `${companyPrefix}-L`;
+    } else if (type === 13) {
+        model = Modal.Company;
+        prefix = useFixedPrefix ? 'COM' : `${companyPrefix}-COM`;
+    } else {
+        throw new Error("Invalid type");
     }
 
-    let check = await Service.findOne(model, {}, { patientNo: 1, orderNo: 1, materialNo: 1, uomNo: 1, locationNo: 1, companyNo: 1 }, { sort: { _id: -1 } });
+    // Fetch last record for the given type and company
+    let check = await Service.findOne(
+        model,
+        { companyId },
+        { patientNo: 1, orderNo: 1, materialNo: 1, uomNo: 1, locationNo: 1, companyNo: 1 },
+        { sort: { _id: -1 } }
+    );
 
     let newNumber;
     if (!check) {
-        newNumber = startingId; 
+        newNumber = startingId;
     } else {
-        const alreadyId = check.patientNo || check.orderNo || check.materialNo || check.locationNo || check.uomNo || check.companyNo;
-        let previousNumber = Number(alreadyId.match(/\d+/)); 
+        // Determine the last used ID for the specific type
+        let alreadyId;
+        if (type === 1) alreadyId = check.patientNo;
+        else if (type === 2) alreadyId = check.orderNo;
+        else if (type === 9) alreadyId = check.materialNo;
+        else if (type === 11) alreadyId = check.uomNo;
+        else if (type === 12) alreadyId = check.locationNo;
+        else if (type === 13) alreadyId = check.companyNo;
+
+        let previousNumber = alreadyId ? Number(alreadyId.match(/\d+/)) : startingId - 1;
         newNumber = previousNumber + 1;
     }
 

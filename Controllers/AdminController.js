@@ -379,7 +379,7 @@ async function addEditPatient(payloadData, userData) {
         } else {
             // const pass = generatePassword()
             // payloadData.password =  await CryptData(pass);
-            payloadData.patientNo = await generateUniqueNo(1)
+            payloadData.patientNo = await generateUniqueNo(1,payloadData.companyId)
             await Service.saveData(model, payloadData);
         }
     }
