@@ -621,6 +621,19 @@ module.exports = [
             }
         }
     },
+    
+    {
+        method: 'POST',
+        path: '/duplicateCodes',
+        options: {
+          validate: {
+            payload: Joi.object({
+              newCompanyId: Joi.string().required(),
+            }),
+          },
+        },
+        handler: AdminController.duplicateCodes,
+      },
    
     {
         method: 'POST',

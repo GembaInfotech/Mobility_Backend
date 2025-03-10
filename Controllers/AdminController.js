@@ -754,6 +754,44 @@ async function addEditData(payloadData, userData) {
     }
 }
 
+const Codes = require('../Models/Codes');
+async function duplicateCodes(request, h) {
+    try {
+        const { newCompanyId } = request.payload;
+
+        // Fetch all documents, excluding `_id` so MongoDB generates a new one
+        const allCodes = await Codes.find({}, { _id: 0 });
+
+        if (allCodes.length === 0) {
+            return h.response({ message: "No records found" }).code(404);
+        }
+
+        // Modify each document
+        const duplicatedCodes = allCodes.map(doc => {
+            const { companyId, ...rest } = doc.toObject(); // Remove existing companyId
+            return {
+                ...rest,
+                companyId: newCompanyId, // Assign new company ID
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+        });
+
+        // Insert data in batches to prevent memory overload
+        const batchSize = 5000;
+        for (let i = 0; i < duplicatedCodes.length; i += batchSize) {
+            await Codes.insertMany(duplicatedCodes.slice(i, i + batchSize));
+        }
+
+        return h.response({
+            message: `Successfully duplicated ${duplicatedCodes.length} records with new companyId: ${newCompanyId}`
+        }).code(201);
+    } catch (error) {
+        console.error("Error duplicating codes:", error);
+        return h.response({ error: "Internal Server Error" }).code(500);
+    }
+};
+
 async function addEditPrescription(payloadData, userData) {
 
     let model = Modal.Prescriptions, dataToSet = {};
@@ -999,7 +1037,7 @@ module.exports = {
     addEditInsurance: addEditInsurance,
     addEditPhysician: addEditPhysician,
     addEditPatient: addEditPatient,
-
+    duplicateCodes:duplicateCodes,
     dashboardData: dashboardData,
     addEditData: addEditData,
     addEditPrescription: addEditPrescription,
