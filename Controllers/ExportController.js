@@ -1,6 +1,6 @@
 "use strict";
 
-const moment = require('moment');
+const moment = require('moment-timezone');
 const xlsx = require("json-as-xlsx");
 const { APP_CONSTANTS } = require('../Config');
 const Models = require('../Models');
@@ -277,11 +277,11 @@ function formatExcelData(type) {
             case 1: {
                 columns = [
                     { label: "Order No", value: (row) => `${row?.orderNo}` || '' },
-                    { label: "Prescription Date", value: (row) => moment(row.createdAt).format('MM/DD/YYYY') },
+                    { label: "Prescription Date", value: (row) => moment(row.createdAt).tz('America/New_York').format('MM/DD/YYYY') },
                     { label: "Order Status", value: (row) => findKeyByValue(APP_CONSTANTS.DATABASE.ORDER_STATUS, row.orderStatus) },
                     { label: "Patient ID", value: (row) => `${row?.patientId?.patientNo}` || '' },
                     { label: "Patient Name", value: (row) => `${row?.patientId?.lastName}, ${row?.patientId?.firstName}` || '' },
-                    { label: "Patient DOB", value: (row) => moment(row?.patientId?.dob).format('MM/DD/YYYY') },
+                    { label: "Patient DOB", value: (row) => moment(row?.patientId?.dob).tz('America/New_York').format('MM/DD/YYYY')},
                     { label: "NASPAC No.", value: (row) => row?.patientId?.naspacNo || '' },
                     { label: "Mobile", value: (row) => row?.patientId?.countryCode + ' ' + formatUsaPhone(row?.patientId?.phoneNumber) },
                     { label: "Primary Insurance", value: (row) => row.patientId?.primaryInsurance?.name || '' },
@@ -289,7 +289,7 @@ function formatExcelData(type) {
                     { label: "Secondary Insurance", value: (row) => row?.patientId?.secondaryInsurance?.name || '' },
                     { label: "Secondary Insurance No.", value: (row) => row?.patientId?.secondaryInsuranceNo || '' },
                     { label: "Insurance Type", value: (row) => findKeyByValue(APP_CONSTANTS.DATABASE.INSURANCE_TYPE, row.insuranceType) },
-                    { label: "Next Appointment Date", value: (row) => moment(row?.nextAppointmentDate).format('MM/DD/YYYY') || '' },
+                    { label: "Next Appointment Date", value: (row) => moment(row?.nextAppointmentDate).tz('America/New_York').format('MM/DD/YYYY')|| '' },
                     { label: "Prescription Location", value: (row) => row?.locationId?.name || '' },
                     { label: "Next Appointment Location", value: (row) => row?.appointmentLocationId?.name || '' },
                     { label: "Referring Physician Name", value: (row) => row.physicianId?.name || '' },
