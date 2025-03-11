@@ -867,7 +867,7 @@ async function addEditPrescription(payloadData, userData) {
         return await Service.findAndUpdate(model, { _id: payloadData.id }, payloadData, { new: true });
     }
     else {
-        payloadData.orderNo = await generateUniqueNo(2);
+        payloadData.orderNo = await generateUniqueNo(2, payloadData.companyId);
         return await Service.saveData(model, payloadData);
     }
 }
