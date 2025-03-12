@@ -353,7 +353,8 @@ async function addEditPatient(payloadData, userData) {
         if (payloadData.phoneNumber) {
             const criteria = {
                 status: { $ne: APP_CONSTANTS.DATABASE.STATUS.DELETED },
-                phoneNumber: payloadData.phoneNumber
+                phoneNumber: payloadData.phoneNumber,
+                companyId:payloadData.companyId
             };
             if (payloadData.id) {
                 criteria._id = { $ne: payloadData.id }
