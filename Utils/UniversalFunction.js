@@ -249,13 +249,17 @@ async function generateUniqueNo(type, companyId) {
     let startingId = 100001;
     let numberLength = 6;
 
-    let company = await Service.findOne(Modal.Company, { _id: companyId }, { name: 1 });
-    if (!company) {
-        throw new Error("Company not found");
-    }
-
-    let companyPrefix = company.name.substring(0, 3).toUpperCase();
+    let companyPrefix = "";
     let useFixedPrefix = companyId === "67c3ec77851f03d96270ca85";
+
+    // Skip fetching company details for type 13
+    if (type !== 13) {
+        let company = await Service.findOne(Modal.Company, { _id: companyId }, { name: 1 });
+        if (!company) {
+            throw new Error("Company not found");
+        }
+        companyPrefix = company.name.substring(0, 3).toUpperCase();
+    }
 
     if (type === 1) {
         model = Modal.Patients;
@@ -274,15 +278,17 @@ async function generateUniqueNo(type, companyId) {
         prefix = useFixedPrefix ? 'L' : `${companyPrefix}-L`;
     } else if (type === 13) {
         model = Modal.Company;
-        prefix = useFixedPrefix ? 'COM' : `${companyPrefix}-COM`;
+        prefix = 'COM'; // No company prefix needed
     } else {
         throw new Error("Invalid type");
     }
 
-    // Fetch last record for the given type and company
+    // Fetch last record for the given type and company (skip companyId check for type 13)
+    let query = type === 13 ? {} : { companyId };
+    
     let check = await Service.findOne(
         model,
-        { companyId },
+        query,
         { patientNo: 1, orderNo: 1, materialNo: 1, uomNo: 1, locationNo: 1, companyNo: 1 },
         { sort: { _id: -1 } }
     );
@@ -308,6 +314,7 @@ async function generateUniqueNo(type, companyId) {
 
     return `${prefix}${formattedNumber}`;
 }
+
 
 async function uploadFileStorage(image, folder) {
     console.log("image", image, "folder", folder);
