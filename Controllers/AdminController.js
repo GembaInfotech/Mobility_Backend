@@ -756,29 +756,32 @@ async function addEditData(payloadData, userData) {
 }
 
 async function addEditPrescription(payloadData, userData) {
-
+    console.log("prescription test 1")
     let model = Modal.Prescriptions, dataToSet = {};
     payloadData.lastUpdateBy = userData._id;
 
     if (payloadData.id && payloadData.orderStatus) {
+        console.log("prescription test 2")
         payloadData.commentAddedBy = userData._id;
     }
     if (payloadData.orderStatus === 7 && payloadData.NALId && payloadData.lcodeQuantity && payloadData.lcodeId) {
-
+        console.log("prescription test 3")
         const lcodeQuantities = JSON.parse(payloadData.lcodeQuantity);
+        console.log("prescription test 4")
         const lcodeIds = JSON.parse(payloadData.lcodeId);
+        console.log("prescription test 5")
         let criteria = {
             lcodeId: { $in: lcodeIds },
             locationId: payloadData.NALId,
         };
-
+        console.log("prescription test 6")
         const StockData = await Service.getData(Modal.StockEntry, criteria, {}, { lean: true });
         console.log("stockData check 1", StockData)
         const stockDataMap = StockData.reduce((acc, item) => {
             acc[item.lcodeId] = item;
             return acc;
         }, {});
-
+        console.log("prescription test 7")
         console.log("stockDataMap", stockDataMap)
         const orderedStockData = lcodeIds.map(lcodeId => stockDataMap[lcodeId]);
 
@@ -828,9 +831,10 @@ async function addEditPrescription(payloadData, userData) {
                 )
             );
         }
+        console.log("prescription test 8")
         await Promise.all(updates);
     }
-    
+    console.log("prescription test 9")
     if (payloadData.prescriptions) {
         payloadData.prescriptions = JSON.parse(payloadData.prescriptions)
     };
@@ -841,7 +845,7 @@ async function addEditPrescription(payloadData, userData) {
     if (payloadData.prescriptionDocument)
         payloadData.prescriptionDocument = await uploadFileStorage(payloadData.prescriptionDocument, APP_CONSTANTS.FOLDER_PATH(APP_CONSTANTS.DATABASE.MEDIA_UPLOAD_TYPE.ORDERS));
 
-
+    console.log("prescription test 10")
     if (payloadData.primaryInsurance) {
         dataToSet.primaryInsurance = payloadData.primaryInsurance;
     }
@@ -865,6 +869,7 @@ async function addEditPrescription(payloadData, userData) {
         await Service.findAndUpdate(Modal.Patients, { _id: payloadData.patientId }, dataToSet, { new: true });
 
     if (payloadData.id) {
+        console.log("prescription test 11")
         return await Service.findAndUpdate(model, { _id: payloadData.id }, payloadData, { new: true });
     }
     else {
