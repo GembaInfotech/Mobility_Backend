@@ -17,7 +17,7 @@ switch (process.env.NODE_ENV) {
     case 'dev':{
         exports.config = {
             PORT : 8000,
-            dbURI : 'mongodb://naspDev:OJb3ss7281Tl9TW@74.235.98.55/naspDev',
+            dbURI : 'mongodb://adminUser:Gemba123@103.171.96.154/admin',
             swaggerName : 'Dev APIs'
         };
         break;
@@ -25,7 +25,7 @@ switch (process.env.NODE_ENV) {
     case 'live':{
         exports.config = {
             PORT : 8001,
-            dbURI : 'mongodb://naspLive:OJb3ss7281Tl9TW@localhost/naspLive',
+            dbURI : 'mongodb://mobilityliveUser:Gemba321@103.171.96.154/mobilitylive',
             swaggerName : 'Live APIs',
             paymentURI : ''
         };
