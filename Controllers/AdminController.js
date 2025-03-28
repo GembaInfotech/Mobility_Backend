@@ -211,8 +211,10 @@ async function addEditSubAdmin(payloadData, userData) {
     try {
         let model = Modal.Admins;
 
-        console.log("payloadData", payloadData);
-
+        // console.log("payloadDataaaaaaaaa", payloadData);
+        if(payloadData.companyIds){
+            payloadData.companyId = JSON.parse(payloadData.companyIds)
+        }
 
         if (payloadData.phoneNumber) {
             const criteria = {
